@@ -16,12 +16,24 @@ alt9000.read_termination = '\n'
 alt9000.write_termination = '\n'
 #print(alt9000.query('RALT:ASIM:MODE MAN'))
 #time.sleep(1)
+alt9000.write(':RALT:TEST:STOP')
+time.sleep(2)
+alt9000.write(':RALT:ASIM:MODE MAN')
 print(alt9000.query('RALT:ASIM:MODE?'))
+i=700
+cmd=":RALT:ASIM:MAN:CHAN1:START "+str(i)
+print(cmd)
 
 alt9000.write(':RALT:ASIM:MAN:CHAN1:RATE 0')
-alt9000.write(':RALT:ASIM:MAN:CHAN1:START 100')
+alt9000.write(cmd)
 print(alt9000.query(':RALT:ASIM:MAN:CHAN1:START?'))
 print(alt9000.query(':RALT:ASIM:MAN:CHAN1:RATE?'))
+
+alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:TX 0.5")
+alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:RX 7.2")
+
+print(alt9000.query(":RALT:SET:CHAN1:LOSS:CABL:TX?"))
+print(alt9000.query(":RALT:SET:CHAN1:LOSS:CABL:RX?"))
 
 # #print(multimeter.query(":function:voltage:DC"))
 #alt9000.ignore_warning()
@@ -29,7 +41,15 @@ alt9000.write('RALT:TEST:STAR')
 time.sleep(10)
 if alt9000.query(':RALT:TEST:RUNN?'):
     print('Test running')
-time.sleep(10)
+alt9000.write('RALT:TEST:PAUS')
+alt9000.write('RALT:ASIM:MAN:CHAN1:ALT 200')
+time.sleep(5)
+alt9000.write('RALT:ASIM:MAN:CHAN1:ALT 2000')
+time.sleep(5)
+alt9000.write('RALT:ASIM:MAN:CHAN1:ALT 2500')
+time.sleep(5)
+alt9000.write('RALT:ASIM:MAN:CHAN1:ALT 50')
+time.sleep(5)
 alt9000.write('RALT:TEST:STOP')
 
 
