@@ -3,9 +3,11 @@ import pandas as pd
 altitudes = [50,100,200,500,1000,2000,2500]
 filefolder="ALT-55B-Apr29-24\\"
 
+# Calculate the statistics
+
 for x in altitudes:
     infilename=filefolder+"ALT-55B_"+str(x)+".csv"
-    outfilename=filefolder+"ALT-55B_"+str(x)+"stats.csv"
+    outfilename=filefolder+"ALT-55B_"+str(x)+"_stats.csv"
 
     simul=pd.read_csv(infilename)
 
@@ -75,9 +77,7 @@ for x in altitudes:
         
         outdf = outdf._append(tmprow, ignore_index=True)
 
-    outfile=open(outfilename,"w")
-    print(outdf,file=outfile)
-    outfile.close()
+    outdf.to_csv(outfilename)
 
 exit()
 
