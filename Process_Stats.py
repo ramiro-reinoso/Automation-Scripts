@@ -52,14 +52,14 @@ for x in altitudes:
             mtest="PASS"
 
         if this1stptile < ptile1sttest:
-            ptile1sttest="FAIL"
+            priptile1sttest="FAIL"
         else:
-            ptile1sttest="PASS"
+            priptile1sttest="PASS"
 
         if this99thptile > ptile99thtest:
             priptile99thtest="FAIL"
         else:
-            ppriptile99thtest="PASS"
+            priptile99thtest="PASS"
 
         # Error with respect to the baseline data
         meanerror = (basemean - thismean)/basemean * 100
@@ -70,7 +70,7 @@ for x in altitudes:
         stderror = (basestd - thisstd)/basestd * 100
 
         tmprow={'pwr': i,'psd':i-28.5,'mean': thismean,'1stptile': this1stptile,'99thptile': this99thptile,
-                        'meantest': mtest,'1stptiletest': ptile1sttest,'99ptiletest': ppriptile99thtest,
+                        'meantest': mtest,'1stptiletest': priptile1sttest,'99ptiletest': priptile99thtest,
                         'min':thismin,'max':thismax,'std':thisstd,'meanerror':meanerror,'minerror':minerror,
                         'maxerror':maxerror,'ptile1sterror':ptile1sterror,'ptile99therror':ptile99therror,
                         'stderror':stderror}
