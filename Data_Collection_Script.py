@@ -35,34 +35,37 @@ viavi = pyvisa.ResourceManager()
 alt9000 = viavi.open_resource("TCPIP0::10.1.1.153::5025::SOCKET")
 alt9000.read_termination = '\n'
 alt9000.write_termination = '\n'
-print(alt9000)
 # Stop any on-going simulations
 alt9000.write('RALT:TEST:STOP')
 time.sleep(2)
 #Set the Tx and Rx cable losses for the simulation as measured
 alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:TX 1.3")
 alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:RX 8.7")
-print(alt9000.query(":RALT:SET:CHAN1:LOSS:CABL:TX?"))
-print(alt9000.query(":RALT:SET:CHAN1:LOSS:CABL:RX?"))
 # Set the ALT9000 to manual mode and fixed altitude
 alt9000.write(':RALT:ASIM:MODE MAN')
-print(alt9000.query('RALT:ASIM:MODE?'))
 alt9000.write(':RALT:ASIM:MAN:CHAN1:RATE 0')
-print(alt9000.query(':RALT:ASIM:MAN:CHAN1:RATE?'))
+# Log the simulator configuration
+print("ALT9000 Session Info: ",str(alt9000))
+print("Simulation Mode: ",str(alt9000.query('RALT:ASIM:MODE?')))
+print("Simulation Climbing Rate (shoudl be zero): ",str(alt9000.query(':RALT:ASIM:MAN:CHAN1:RATE?'))," feet/sec")
+print("Transmit cable losses: ",str(alt9000.query(":RALT:SET:CHAN1:LOSS:CABL:TX?"))," dB")
+print("Receive cable losses: ",str(alt9000.query(":RALT:SET:CHAN1:LOSS:CABL:RX?"))," dB")
+
 # Start the ALT-9000 simulation at 100 ft and pause it
 alt9000.write(":RALT:ASIM:MAN:CHAN1:START 100")
 alt9000.write('RALT:TEST:STAR')
 time.sleep(10)
 alt9000.write('RALT:TEST:PAUS')
 
-
+# Start the loop to cycle through the altitudes
 for i in altitudes:
-  print('Altitude ',int(i),' feet')
-
   # Set the ALT-9000 to the desired altitude
   cmd=":RALT:ASIM:MAN:CHAN1:ALT "+str(i)
   alt9000.write(cmd)
   time.sleep(5)
+
+  print('Desired Altitude: ',int(i),' feet')
+  print("Altitude in ALT9000: ",str(alt9000.query("RALT:ASIM:MAN:CHAN1:ALT?"))," feet")
 
   # Open the output file for writing
   filename="ALT-55B-Apr29-24\ALT-55B_"+str(i)+".csv"
@@ -100,11 +103,11 @@ for i in altitudes:
   
   outfile.close()
 
+alt9000.write('RALT:TEST:RES')
+time.sleep(2)
 alt9000.write('RALT:TEST:STOP')
 smcv.close()
 multimeter.close()
 alt9000.close()
-print("Total Simulation Time:")
-print(time.time() - siminit)
-
+print("Total Simulation Time: ",str(time.time() - siminit)," seconds.")
 exit()
