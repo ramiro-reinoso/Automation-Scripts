@@ -1,58 +1,84 @@
 import pandas as pd
 
-simul=pd.read_csv("ALT-55B_50.csv")
+altitudes = [50,100,200,500,1000,2000,2500]
+filefolder="ALT-55B-Apr29-24\\"
+
+for x in altitudes:
+    infilename=filefolder+"ALT-55B_"+str(x)+".csv"
+    outfilename=filefolder+"ALT-55B_"+str(x)+"stats.csv"
+
+    simul=pd.read_csv(infilename)
+
+    # Compute the baseline statistics (the first 60 seconds with power OFF)
+    base=simul[(simul["rfon"] == 0) & (simul["time"] < 65)]
+    basemean=base["alt"].mean()
+    base1stptile=base["alt"].quantile(0.01)
+    base99thptile=base["alt"].quantile(0.99)
+    basemin=base["alt"].min()
+    basemax=base["alt"].max()
+    basestd=base["alt"].std()
+
+    outdf=pd.DataFrame({'pwr':["Baseline"],'psd':["Baseline"],'mean':[basemean],'1stptile':[base1stptile],'99thptile':[base99thptile],
+                        'meantest':["N/A"],'1stptiletest':["N/A"],'99ptiletest':["N/A"],'min':[basemin],'max':[basemax],
+                        'std':[basestd],'meanerror':["N/A"],'minerror':["N/A"],
+                        'maxerror':["N/A"],'ptile1sterror':["N/A"],'ptile99therror':["N/A"],'stderror':["N/A"]})
 
 
+    for i in range(-15,4):
+        tmppwr=simul[simul["pwr"] == i]
 
-base=simul[(simul["rfon"] == 0) & (simul["time"] < 65)]
-# print(base.head())
-# print(base.describe())
-basemean=base["alt"].mean()
-base1stptile=base["alt"].quantile(0.01)
-base99thptile=base["alt"].quantile(0.99)
+        thismean=tmppwr["alt"].mean()
+        this1stptile=tmppwr["alt"].quantile(0.01)
+        this99thptile=tmppwr["alt"].quantile(0.99)
+        thismin=tmppwr['alt'].min()
+        thismax=tmppwr['alt'].max()
+        thisstd=tmppwr['alt'].std()   
 
-outdf=pd.DataFrame({'pwr':["Baseline"],'mean':[basemean],'1stptile':[base1stptile],'99thptile':[base99thptile],
-                    'meantest':["N/A"],'1stptiletest':["N/A"],'99ptiletest':["N/A"]})
+        # Calculate test inputs
+        meantest = abs(basemean - thismean)/thismean * 100
+        ptile1sttest = basemean - (0.02 * basemean)
+        ptile99thtest = basemean + (0.02 * basemean)
 
+        # print("Power: ",str(i))
+        # print(thismean)
+        # print(this1stptile)
+        # print(this99thptile)
 
-for i in range(-15,4):
-    tmppwr=simul[simul["pwr"] == i]
+        if meantest > 0.5:
+            mtest="FAIL"
+        else:
+            mtest="PASS"
 
-    thismean=tmppwr["alt"].mean()
-    this1stptile=tmppwr["alt"].quantile(0.01)
-    this99thptile=tmppwr["alt"].quantile(0.99)
+        if this1stptile < ptile1sttest:
+            ptile1sttest="FAIL"
+        else:
+            ptile1sttest="PASS"
 
-    # Calculate test inputs
-    meantest = abs(basemean - thismean)/thismean * 100
-    ptile1sttest = basemean - (0.02 * basemean)
-    ptile99thtest = basemean + (0.02 * basemean)
+        if this99thptile > ptile99thtest:
+            priptile99thtest="FAIL"
+        else:
+            ppriptile99thtest="PASS"
 
-    # print("Power: ",str(i))
-    # print(thismean)
-    # print(this1stptile)
-    # print(this99thptile)
+        # Error with respect to the baseline data
+        meanerror = (basemean - thismean)/basemean * 100
+        minerror = (basemin - thismin)/basemin * 100
+        maxerror = (basemax - thismax)/basemax * 100
+        ptile1sterror = (base1stptile - this1stptile)/base1stptile * 100
+        ptile99therror = (base99thptile - this99thptile)/base99thptile * 100
+        stderror = (basestd - thisstd)/basestd * 100
 
-    if meantest > 0.5:
-        mtest="FAIL"
-    else:
-        mtest="PASS"
+        tmprow={'pwr': i,'psd':i-28.5,'mean': thismean,'1stptile': this1stptile,'99thptile': this99thptile,
+                        'meantest': mtest,'1stptiletest': ptile1sttest,'99ptiletest': ppriptile99thtest,
+                        'min':thismin,'max':thismax,'std':thisstd,'meanerror':meanerror,'minerror':minerror,
+                        'maxerror':maxerror,'ptile1sterror':ptile1sterror,'ptile99therror':ptile99therror,
+                        'stderror':stderror}
+        
+        outdf = outdf._append(tmprow, ignore_index=True)
 
-    if this1stptile < ptile1sttest:
-        ptile1sttest="FAIL"
-    else:
-        ptile1sttest="PASS"
+    outfile=open(outfilename,"w")
+    print(outdf,file=outfile)
+    outfile.close()
 
-    if this99thptile > ptile99thtest:
-        priptile99thtest="FAIL"
-    else:
-        ppriptile99thtest="PASS"
-
-    tmprow={'pwr': i,'mean': thismean,'1stptile': this1stptile,'99thptile': this99thptile,
-                    'meantest': mtest,'1stptiletest': ptile1sttest,'99ptiletest': ppriptile99thtest}
-    
-    outdf = outdf._append(tmprow, ignore_index=True)
-
-print(outdf)
 exit()
 
 

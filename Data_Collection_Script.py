@@ -5,7 +5,6 @@ from RsSmcv import *
 # import the VISA libraries to communicate with the Rigol multimeter
 import pyvisa
 
-import io
 from alt55B_volts_to_feet import voltstofeet
 
 # Setup some variables
@@ -70,6 +69,9 @@ for i in altitudes:
   # Open the output file for writing
   filename="ALT-55B-Apr29-24\ALT-55B_"+str(i)+".csv"
   outfile = open(filename,"w")
+
+  # Write the column headers in the results csv file
+  print("time,rfon,pwr,alt",file=outfile)
 
   # init_ts stores the script start time in seconds
   init_ts = time.time()
