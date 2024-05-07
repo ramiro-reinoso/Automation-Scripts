@@ -1,13 +1,20 @@
 import pandas as pd
 
-altitudes = [50,100,200,500,1000,2000,2500]
-filefolder="ALT-55B-Apr29-24\\"
+altitudes = [50,100]
+filefolder="ALT-55B-May07-24\\"
+radar="ALT-55B"
+genminpower = -35
+genmaxpower = -20
+minpowerforplot = genminpower - 10
+genpwrtopsd=17.8 # Add this to 5G gen power to get PSD
+
+
 
 # Calculate the statistics
 
 for x in altitudes:
-    infilename=filefolder+"ALT-55B_"+str(x)+".csv"
-    outfilename=filefolder+"ALT-55B_"+str(x)+"_stats.csv"
+    infilename=filefolder+radar+"_"+str(x)+".csv"
+    outfilename=filefolder+radar+"_"+str(x)+"_stats.csv"
 
     simul=pd.read_csv(infilename)
 
@@ -26,7 +33,7 @@ for x in altitudes:
                         'maxerror':["N/A"],'ptile1sterror':["N/A"],'ptile99therror':["N/A"],'stderror':["N/A"]})
 
 
-    for i in range(-15,4):
+    for i in range(genminpower,genmaxpower):
         tmppwr=simul[simul["pwr"] == i]
 
         thismean=tmppwr["alt"].mean()
@@ -69,7 +76,7 @@ for x in altitudes:
         ptile99therror = (base99thptile - this99thptile)/base99thptile * 100
         stderror = (basestd - thisstd)/basestd * 100
 
-        tmprow={'pwr': i,'psd':i-28.5,'mean': thismean,'1stptile': this1stptile,'99thptile': this99thptile,
+        tmprow={'pwr': i,'psd':round(i+genpwrtopsd,1),'mean': thismean,'1stptile': this1stptile,'99thptile': this99thptile,
                         'meantest': mtest,'1stptiletest': priptile1sttest,'99ptiletest': priptile99thtest,
                         'min':thismin,'max':thismax,'std':thisstd,'meanerror':meanerror,'minerror':minerror,
                         'maxerror':maxerror,'ptile1sterror':ptile1sterror,'ptile99therror':ptile99therror,

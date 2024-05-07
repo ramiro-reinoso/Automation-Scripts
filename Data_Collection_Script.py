@@ -5,13 +5,20 @@ from RsSmcv import *
 # import the VISA libraries to communicate with the Rigol multimeter
 import pyvisa
 
+# import file libraries
+import os
+
+# import local functions
 from alt55B_volts_to_feet import voltstofeet
 
-# Setup some variables
-genminpower = -15
-genmaxpower = 4
+# Setup variables for this simulation
+folder="ALT-55B-May07-24"
+radar="ALT-55B"
+genminpower = -35
+genmaxpower = -20
 minpowerforplot = genminpower - 10
-altitudes = [50,100,200,500,1000,2000,2500]
+#altitudes = [50,100,200,500,1000,2000,2500]
+altitudes = [50,100]
 
 # Open the log file for this session and prepare for logging
 siminit=time.time()
@@ -67,7 +74,10 @@ for i in altitudes:
   print("Altitude in ALT9000: ",str(alt9000.query("RALT:ASIM:MAN:CHAN1:ALT?"))," feet")
 
   # Open the output file for writing
-  filename="ALT-55B-Apr29-24\ALT-55B_"+str(i)+".csv"
+  if not os.path.exists(folder):
+    os.makedirs(folder)
+
+  filename=folder+"\\"+radar+"_"+str(i)+".csv"
   outfile = open(filename,"w")
 
   # Write the column headers in the results csv file

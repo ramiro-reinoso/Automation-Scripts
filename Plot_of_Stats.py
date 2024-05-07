@@ -3,26 +3,27 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 import numpy as np
 
-altitudes = [50,100,200,500,1000,2000,2500]
-#altitudes = [50]
-filefolder="ALT-55B-Apr29-24\\"
+# Setup variables for this simulation
+folder="ALT-55B-May07-24"
+radar="ALT-55B"
+simulation="100 MHz TM1_1 Centered at 3990 MHz"
+genminpower = -35
+genmaxpower = -20
+minpowerforplot = genminpower - 10
+#altitudes = [50,100,200,500,1000,2000,2500]
+altitudes = [50,100]
 
 for x in altitudes:
-    infilename=filefolder+"ALT-55B_"+str(x)+"_stats.csv"
-    outfilename=filefolder+"ALT-55B_"+str(x)+"_stats.png"
+    infilename=folder+"\\"+radar+"_"+str(x)+"_stats.csv"
+    outfilename=folder+"\\"+radar+"_"+str(x)+"_stats.png"
 
-    plottitle="ALT-55B at "+str(x)+" ft with 100 MHz TM1_1 Centered at 3990 MHz"
+    plottitle=radar+" at "+str(x)+" ft with "+simulation
 
     print("Processing "+infilename)
     df=pd.read_csv(infilename)
     # Drop the first row which is the baseline row
     df = df.drop([0])
     
-    # stats=df[['psd','meanerror','maxerror','minerror','ptile99therror','ptile1sterror']].copy()
-    # print(stats)
-
-    # stats.plot('psd')
-
     # Create a figure with subplots
     fig,ax = plt.subplots(figsize=(7,5))
 
