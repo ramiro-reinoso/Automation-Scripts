@@ -12,13 +12,14 @@ import os
 from alt55B_volts_to_feet import voltstofeet
 
 # Setup variables for this simulation
-folder="ALT-55B-May07-24"
+folder="ALT-55B-May08-24"
 radar="ALT-55B"
 genminpower = -35
-genmaxpower = -20
+genmaxpower = -11
 minpowerforplot = genminpower - 10
-#altitudes = [50,100,200,500,1000,2000,2500]
-altitudes = [50,100]
+altitudes = [50,100,200,500,1000,2000,2500]
+stopat = 0.2  # Stop if the average altitude is stopat percent greater than baseline altitude
+              # for a given power level.
 
 # Open the log file for this session and prepare for logging
 siminit=time.time()
@@ -53,7 +54,7 @@ alt9000.write(':RALT:ASIM:MAN:CHAN1:RATE 0')
 # Log the simulator configuration
 print("ALT9000 Session Info: ",str(alt9000))
 print("Simulation Mode: ",str(alt9000.query('RALT:ASIM:MODE?')))
-print("Simulation Climbing Rate (shoudl be zero): ",str(alt9000.query(':RALT:ASIM:MAN:CHAN1:RATE?'))," feet/sec")
+print("Simulation Climbing Rate (should be zero): ",str(alt9000.query(':RALT:ASIM:MAN:CHAN1:RATE?'))," feet/sec")
 print("Transmit cable losses: ",str(alt9000.query(":RALT:SET:CHAN1:LOSS:CABL:TX?"))," dB")
 print("Receive cable losses: ",str(alt9000.query(":RALT:SET:CHAN1:LOSS:CABL:RX?"))," dB")
 
@@ -89,22 +90,41 @@ for i in altitudes:
   # Establish the baseline performance for 60 seconds
   print("Establish baseline performance")
   smcv.output.state.set_value(False)
-  time.sleep(2)
+  time.sleep(5)
+  basesamples=0
+  basecumulative=0.0
+  baseaverage=0.0
+
   while time.time() < init_ts + 60:
     timestamp = time.time() - init_ts
     print(float(timestamp),",0,",int(minpowerforplot),",", float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+    basesamples=basesamples + 1
+    basecumulative=basecumulative + voltstofeet(multimeter.query(":measure:voltage:DC?"))
+
+  baseaverage=basecumulative / basesamples  # Establish the average altitude baseline 
 
   # Start the sweep
+  done = False
   for x in range(genminpower, genmaxpower):
+    if done:
+      break   # No need to go further as the radar failed the last power level tests
+
     smcv.source.power.level.immediate.set_amplitude(x)
     
     print("Power level ", int(x)," ,RF Output ON")
     smcv.output.state.set_value(True)
     time.sleep(2)  # Wait before collecting sample to avoid any transient effects
+    thissamples=0
+    thisaverage=0.0
+    thiscumulative=0.0
     temptime = time.time()
     while time.time() < temptime + 20:
       timestamp = time.time() - init_ts
       print(float(timestamp),",1,", int(x),",", float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+      thissamples=thissamples + 1
+      thiscumulative=thiscumulative + voltstofeet(multimeter.query(":measure:voltage:DC?"))
+
+    thisaverage=thiscumulative / thissamples  # Calculate the average altitude for this sweep
 
     print("RF Power Output OFF")
     temptime = time.time()
@@ -112,6 +132,9 @@ for i in altitudes:
     while time.time() < temptime + 10:
       timestamp = time.time() - init_ts
       print(float(timestamp),",0,",int(minpowerforplot),",", float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+
+    if (abs(baseaverage - thisaverage)/baseaverage) > stopat:
+      done = True
   
   outfile.close()
 
