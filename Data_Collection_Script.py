@@ -12,10 +12,10 @@ import os
 from alt55B_volts_to_feet import voltstofeet
 
 # Setup variables for this simulation
-folder="ALT-55B-May08-24"
+folder="ALT-55B-May10-24-04"
 radar="ALT-55B"
-genminpower = -35
-genmaxpower = -11
+genminpower = -25
+genmaxpower = -10
 minpowerforplot = genminpower - 10
 altitudes = [50,100,200,500,1000,2000,2500]
 stopat = 0.2  # Stop if the average altitude is stopat percent greater than baseline altitude

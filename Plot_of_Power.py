@@ -2,15 +2,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Setup variables to match the simulation
-folder="ALT-55B-May07-24"
+folder="ALT-55B-May10-24-03"
 radar="ALT-55B"
-genminpower = -35
-genmaxpower = -20
+genminpower = -25
+genmaxpower = -10
 minpowerforplot = genminpower - 10
 genpwrtopsd=17.8 # Add this to 5G gen power to get PSD
-#altitudes = [50,100,200,500,1000,2000,2500]
-altitudes = [50,100]
-simulation="100 MHz TM1_1 Centered at 3990 MHz"
+altitudes = [50,100,200,500,1000,2000,2500]
+simulation="100 MHz TM1_1 Centered at 4130 MHz with Filter"
 
 # Calculated plot variables
 minplotpsd=minpowerforplot + genpwrtopsd - 2

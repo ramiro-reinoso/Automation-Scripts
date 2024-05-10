@@ -4,14 +4,14 @@ from matplotlib.ticker import MultipleLocator
 import numpy as np
 
 # Setup variables for this simulation
-folder="ALT-55B-May07-24"
+folder="ALT-55B-May08-24"
 radar="ALT-55B"
 simulation="100 MHz TM1_1 Centered at 3990 MHz"
 genminpower = -35
-genmaxpower = -20
+genmaxpower = -11
 minpowerforplot = genminpower - 10
-#altitudes = [50,100,200,500,1000,2000,2500]
-altitudes = [50,100]
+altitudes = [50,100,200,500,1000,2000,2500]
+
 
 for x in altitudes:
     infilename=folder+"\\"+radar+"_"+str(x)+"_stats.csv"
@@ -49,7 +49,7 @@ for x in altitudes:
     #ax.set_xlim(0,25)
     ax.xaxis.set_major_locator(MultipleLocator(0.5))
 
-    plt.ylim([-100,10])
+    plt.ylim([-80,80])
     plt.grid(visible=True)
     plt.title(plottitle)
 
