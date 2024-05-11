@@ -1,10 +1,10 @@
 import pandas as pd
 
 altitudes = [50,100,200,500,1000,2000,2500]
-filefolder="ALT-55B-May08-24\\"
+filefolder="ALT-55B-May10-24-03"
 radar="ALT-55B"
-genminpower = -35
-genmaxpower = -11
+genminpower = -25
+genmaxpower = -10
 minpowerforplot = genminpower - 10
 genpwrtopsd=17.8 # Add this to 5G gen power to get PSD
 
@@ -13,8 +13,8 @@ genpwrtopsd=17.8 # Add this to 5G gen power to get PSD
 # Calculate the statistics
 
 for x in altitudes:
-    infilename=filefolder+radar+"_"+str(x)+".csv"
-    outfilename=filefolder+radar+"_"+str(x)+"_stats.csv"
+    infilename=filefolder+"\\"+radar+"_"+str(x)+".csv"
+    outfilename=filefolder+"\\"+radar+"_"+str(x)+"_stats.csv"
 
     simul=pd.read_csv(infilename)
 
