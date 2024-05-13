@@ -17,7 +17,7 @@ radar="ALT-55B"
 genminpower = -25
 genmaxpower = -10
 minpowerforplot = genminpower - 10
-frequencies = [4030,4040,4050,4060,4070,4080,4090,4100,4110,4120,4130]
+frequencies = [4030]
 altitudes = [50]
 stopat = 0.2  # Stop if the average altitude is stopat percent greater than baseline altitude
               # for a given power level.
