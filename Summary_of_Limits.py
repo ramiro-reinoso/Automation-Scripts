@@ -1,7 +1,7 @@
 import pandas as pd
 
 altitudes = [50,100,200,500,1000,2000,2500]
-filefolder="ALT-55B-May10-24-03"
+filefolder="ALT-55B-May10-24-02"
 radar="ALT-55B"
 
 genpwrtopsd=17.8 # Add this to 5G gen power to get PSD
@@ -22,7 +22,8 @@ for x in altitudes:
 
     # Drop the first row as it contains the baseline statistics which we don't need
     stats = stats.drop([0])
-    print(stats)
+
+    # Convert the power and psd columnt to integer and float respectively
     stats["pwr"] = pd.to_numeric(stats["pwr"],downcast="integer")
     stats["psd"] = pd.to_numeric(stats["psd"])
 
@@ -31,24 +32,24 @@ for x in altitudes:
     genmaxpower = stats["pwr"].max()
     genmaxpower = genmaxpower + 1
 
-    print(genmaxpower)
-    print(genminpower)
-
-
     mflag = False
     p1flag = False
     p99flag = False
     m = ""
     p1 = ""
     p99 = ""
-    psd = 0
+    psd = 0.0
 
     for i in range(genminpower,genmaxpower):
     
+        # Filter the dataframe to find the row that corresponds to the power level
+        # of interest.
         tmppwr=stats[stats["pwr"] == i]
-        print(tmppwr)
+
+        # Calculate the index that correspond to the row of the selected power level.
+        # Even thouth the tmppwr vector has only one row, the index of that row is not
+        # zero but whatever the index was on the stats dataframe.
         index = abs(genminpower) + i + 1
-        print(index)
 
         meantest = tmppwr.loc[index,"meantest"]
         p1test = tmppwr.loc[index,"1stptiletest"]

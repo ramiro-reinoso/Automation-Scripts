@@ -4,10 +4,10 @@ from matplotlib.ticker import MultipleLocator
 import numpy as np
 
 # Setup variables for this simulation
-folder="ALT-55B-May10-24-03"
+folder="ALT-55B-May10-24-02"
 radar="ALT-55B"
-simulation="100 MHz TM1_1 Centered at 4130 MHz with Filter"
-genminpower = -25
+simulation="100 MHz TM1_1 Centered at 4130 MHz No Filter"
+genminpower = -50
 genmaxpower = -10
 minpowerforplot = genminpower - 10
 altitudes = [50,100,200,500,1000,2000,2500]
