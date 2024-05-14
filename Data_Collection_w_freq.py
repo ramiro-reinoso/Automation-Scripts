@@ -12,15 +12,18 @@ import os
 from alt55B_volts_to_feet import voltstofeet
 
 # Setup variables for this simulation
-folder="ALT-55B-May14-24-01"
+folder="ALT-55B-May14-24-03"
 radar="ALT-55B"
-genminpower = -25
+genminpower = -11
 genmaxpower = -10
 minpowerforplot = genminpower - 10
-frequencies = [4050]
+frequencies = [4000]
 altitudes = [50]
 stopat = 0.2  # Stop if the average altitude is stopat percent greater than baseline altitude
               # for a given power level.
+baselineduration = 10 # Duration of the baseline period. AVSI is 60 seconds.
+rfonduration = 10 # Duration of the RF ON period. AVSI is 20 seconds.
+rfoffduration = 1800 # Duration of the RF OFF period.  AVSI is 10 seconds.
 
 # Open the log file for this session and prepare for logging
 siminit=time.time()
@@ -103,7 +106,7 @@ for j in frequencies:
     basecumulative=0.0
     baseaverage=0.0
 
-    while time.time() < init_ts + 60:
+    while time.time() < init_ts + baselineduration:
       timestamp = time.time() - init_ts
       print(float(timestamp),",0,",int(minpowerforplot),",", float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
       basesamples=basesamples + 1
@@ -126,7 +129,7 @@ for j in frequencies:
       thisaverage=0.0
       thiscumulative=0.0
       temptime = time.time()
-      while time.time() < temptime + 20:
+      while time.time() < temptime + rfonduration:
         timestamp = time.time() - init_ts
         print(float(timestamp),",1,", int(x),",", float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
         thissamples=thissamples + 1
@@ -137,7 +140,7 @@ for j in frequencies:
       print("RF Power Output OFF")
       temptime = time.time()
       smcv.output.state.set_value(False)   
-      while time.time() < temptime + 10:
+      while time.time() < temptime + rfoffduration:
         timestamp = time.time() - init_ts
         print(float(timestamp),",0,",int(minpowerforplot),",", float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
 
