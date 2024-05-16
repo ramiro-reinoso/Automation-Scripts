@@ -1,8 +1,8 @@
 import pandas as pd
 
-altitudes = [50]
-frequencies = [4030,4040,4050,4060,4070,4080,4090,4100,4110,4120,4130]
-filefolder="ALT-55B-May14-24-01"
+altitudes = [5,50,100,200]
+frequencies = [4080]
+filefolder="ALT-55B-May15-24-01"
 radar="ALT-55B"
 genminpower = -25
 genmaxpower = -10

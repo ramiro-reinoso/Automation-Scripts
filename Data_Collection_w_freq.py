@@ -12,18 +12,18 @@ import os
 from alt55B_volts_to_feet import voltstofeet
 
 # Setup variables for this simulation
-folder="ALT-55B-May14-24-03"
+folder="ALT-55B-May15-24-01"
 radar="ALT-55B"
-genminpower = -11
+genminpower = -25
 genmaxpower = -10
 minpowerforplot = genminpower - 10
-frequencies = [4000]
-altitudes = [50]
+frequencies = [4080,4090,4100,4110,4120,4130,4140]
+altitudes = [5,50,100,200]
 stopat = 0.2  # Stop if the average altitude is stopat percent greater than baseline altitude
               # for a given power level.
-baselineduration = 10 # Duration of the baseline period. AVSI is 60 seconds.
-rfonduration = 10 # Duration of the RF ON period. AVSI is 20 seconds.
-rfoffduration = 1800 # Duration of the RF OFF period.  AVSI is 10 seconds.
+baselineduration = 60 # Duration of the baseline period. AVSI is 60 seconds.
+rfonduration = 20 # Duration of the RF ON period. AVSI is 20 seconds.
+rfoffduration = 10 # Duration of the RF OFF period.  AVSI is 10 seconds.
 
 # Open the log file for this session and prepare for logging
 siminit=time.time()
