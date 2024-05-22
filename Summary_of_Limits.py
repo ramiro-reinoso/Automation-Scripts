@@ -1,7 +1,7 @@
 import pandas as pd
 
 altitudes = [50,100,200,500,1000,2000,2500]
-filefolder="ALT-55B-May10-24-02"
+filefolder="ALT-55B-May08-24"
 radar="ALT-55B"
 
 genpwrtopsd=17.8 # Add this to 5G gen power to get PSD
