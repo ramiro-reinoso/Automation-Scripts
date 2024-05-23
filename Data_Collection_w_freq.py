@@ -17,8 +17,8 @@ radar="ALT-55B"
 genminpower = -25
 genmaxpower = -10
 minpowerforplot = genminpower - 10
-frequencies = [4130]
-altitudes = [20,50,100,200,500,1000,2000,2500]
+frequencies = [4100]
+altitudes = [20]
 stopat = 10  # Stop if the average altitude is stopat percent greater than baseline altitude
               # for a given power level.
 baselineduration = 60 # Duration of the baseline period. AVSI is 60 seconds.
