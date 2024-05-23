@@ -1,13 +1,13 @@
 import pandas as pd
 
-altitudes = [5,50,100,200]
-frequencies = [4080,4090,4100,4110,4120,4130,4140]
-filefolder="ALT-55B-May15-24-01"
+altitudes = [20]
+frequencies = [4100]
+filefolder="ALT-55B-May22-24-01"
 radar="ALT-55B"
 genminpower = -25
 genmaxpower = -10
 minpowerforplot = genminpower - 10
-genpwrtopsd=17.8 # Add this to 5G gen power to get PSD
+genpwrtopsd=16.8 # Add this to 5G gen power to get PSD
 
 
 

@@ -1,3 +1,9 @@
+# This function converts the output power setting at the 5G generator to
+# power spectral density at the input of the altimeter radar.
+# Not implemented yet on the tools because the difference between the linear
+# region and the -11 dBm maximum test point is only 0.3 dB.  The conversion
+# factor in the linear region is 16.8 dB versus 16.5 dB at 11 dBm of output power.
+
 def pwrtopsd(power):
   power = float(power)
   psd = -999

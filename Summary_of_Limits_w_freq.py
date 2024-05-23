@@ -1,12 +1,10 @@
 import pandas as pd
 
-altitudes = [5,50,100,200]
-frequencies = [4080,4090,4100,4110,4120,4130,4140]
+altitudes = [20,50,100,200,500,1000,2000,2500]
+frequencies = [4100,4110,4120,4130]
 
-filefolder="ALT-55B-May15-24-01"
+filefolder="ALT-55B-May22-24-01"
 radar="ALT-55B"
-
-genpwrtopsd=17.8 # Add this to 5G gen power to get PSD
 
 # Crate the output filename
 outfilename=filefolder+"\\"+radar+"_summary.csv"
