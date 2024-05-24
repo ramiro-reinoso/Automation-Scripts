@@ -12,10 +12,10 @@ import os
 from alt55B_volts_to_feet import voltstofeet
 
 # Setup variables for this simulation
-folder="ALT-55B-May23-24-01"
+folder="ALT-55B-May23-24-02"
 radar="ALT-55B"
-genminpower = -30
-genmaxpower = -10
+genminpower = -10
+genmaxpower = -6
 minpowerforplot = genminpower - 10
 frequencies = [3930,3870]
 altitudes = [20,50,100,200,500,1000,2000,2500]
