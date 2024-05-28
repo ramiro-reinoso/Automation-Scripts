@@ -4,11 +4,11 @@ from matplotlib.ticker import MultipleLocator
 import numpy as np
 
 # Setup variables for this simulation
-folder="ALT-55B-May23-24-01"
+folder="ALT-55B-May24-24-02"
 radar="ALT-55B"
 simulation="IBE for 100 MHz 5G TM1_1 Interference "
-genminpower = -50
-genmaxpower = -10
+genminpower = -25
+genmaxpower = -5
 minpowerforplot = genminpower - 10
 
 frequencies = [3930,3870]

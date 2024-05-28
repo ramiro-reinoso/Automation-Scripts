@@ -8,3 +8,5 @@ VCO configuration:
 VCO	PWR(dBm)	Rate(Hz)	BW(MHz)	Waveform
 VCO-1	-62		118		135	ramp
 VCO-2	-62		118		132	ramp
+
+Notes: not enough power in the 5G interference generation to exceed the FAA maximum PSD at low altitude (5 dBm/MHz)

@@ -3,7 +3,7 @@ import pandas as pd
 altitudes = [20,50,100,200,500,1000,2000,2500]
 frequencies = [3930,3870]
 
-filefolder="ALT-55B-May23-24-02"
+filefolder="ALT-55B-May25-24-03"
 radar="ALT-55B"
 
 # Crate the output filename
@@ -83,7 +83,7 @@ for j in frequencies:
             good = psd - 1
         
         tmprow={'freq':j,'alt': x,'fail': fail,'mean': m,'1stptile': p1,'99thptile': p99,
-                            'lastgood': good,'limit': "N/A"}
+                            'lastgood': round(good,1),'limit': "N/A"}
             
         outdf = outdf._append(tmprow, ignore_index=True)
 

@@ -1,13 +1,18 @@
 import pandas as pd
+from powertopsd5g import pwrtopsd
+
+# altitudes = [20,50,100,200,500,1000,2000,2500]
+# frequencies = [3930,3870]
 
 altitudes = [20,50,100,200,500,1000,2000,2500]
 frequencies = [3930,3870]
-filefolder="ALT-55B-May23-24-02"
+
+filefolder="ALT-55B-May25-24-03"
 radar="ALT-55B"
-genminpower = -10
-genmaxpower = -6
+genminpower = -25
+genmaxpower = -5
 minpowerforplot = genminpower - 10
-genpwrtopsd=14.3 # Add this to 5G gen power to get PSD
+genpwrtopsd=14.3 # Add this to 5G gen power to get PSD unless using the pwrtopsd conversion
 
 
 
@@ -81,7 +86,7 @@ for j in frequencies:
             ptile99therror = (base99thptile - this99thptile)/base99thptile * 100
             stderror = (basestd - thisstd)/basestd * 100
 
-            tmprow={'pwr': i,'psd':round(i+genpwrtopsd,1),'mean': thismean,'1stptile': this1stptile,'99thptile': this99thptile,
+            tmprow={'pwr': i,'psd':round(pwrtopsd(i),1),'mean': thismean,'1stptile': this1stptile,'99thptile': this99thptile,
                             'meantest': mtest,'1stptiletest': priptile1sttest,'99ptiletest': priptile99thtest,
                             'min':thismin,'max':thismax,'std':thisstd,'meanerror':meanerror,'minerror':minerror,
                             'maxerror':maxerror,'ptile1sterror':ptile1sterror,'ptile99therror':ptile99therror,

@@ -4,17 +4,17 @@ import matplotlib.pyplot as plt
 from powertopsd5g import pwrtopsd
 
 # Setup variables to match the simulation
-folder="ALT-55B-May23-24-02"
+folder="ALT-55B-May25-24-01"
 radar="ALT-55B"
-genminpower = -10
-genmaxpower = -6
+genminpower = -25
+genmaxpower = -5
 minpowerforplot = genminpower - 10
 genpwrtopsd=14.3 # Add this to 5G gen power to get PSD
 altitudes = [20,50,100,200,500,1000,2000,2500]
 frequencies = [3930,3870]
 
 for j in frequencies:
-    simulation="100 MHz TM1_1 Centered at "+str(j)+" MHz With Filter"
+    simulation="100 MHz TM1_1 Centered at "+str(j)+" MHz No Filter"
 
     # Calculated plot variables
     minplotpsd=minpowerforplot + genpwrtopsd - 2
@@ -34,7 +34,7 @@ for j in frequencies:
         altaxismax=simul["alt"].max()
         altaxismax=altaxismax + 0.1*altaxismax # Give ourselves some room at the top
 
-        simul["psd"] = simul["pwr"] + genpwrtopsd
+        simul["psd"] = simul["pwr"].apply(pwrtopsd)
 
         ax=simul.plot("time","alt",figsize=(8,4.5))
         ax1=ax.twinx()
