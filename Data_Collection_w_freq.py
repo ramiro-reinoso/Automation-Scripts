@@ -10,17 +10,19 @@ import os
 
 # import local functions
 from alt55B_volts_to_feet import voltstofeet
+from powertopsd5g import pwrtopsdLabFilter
 
 # Setup variables for this simulation
-folder="ALT-55B-May25-24-03"
+folder="ALT-55B-May26-24-01"
 radar="ALT-55B"
 genminpower = -25
-genmaxpower = -5
+genmaxpower = -10
 minpowerforplot = genminpower - 10
-frequencies = [3930,3870]
+frequencies = [4100,4110,4120,4130,4140,4150]
 altitudes = [20,50,100,200,500,1000,2000,2500]
 stopat = 100  # Stop if the average altitude is stopat percent greater than baseline altitude
               # for a given power level.
+
 baselineduration = 60 # Duration of the baseline period. AVSI is 60 seconds.
 rfonduration = 20 # Duration of the RF ON period. AVSI is 20 seconds.
 rfoffduration = 10 # Duration of the RF OFF period.  AVSI is 10 seconds.
@@ -93,7 +95,7 @@ for j in frequencies:
     outfile = open(filename,"w")
 
     # Write the column headers in the results csv file
-    print("time,rfon,pwr,alt",file=outfile)
+    print("time,rfon,pwr,psd,alt",file=outfile)
 
     # init_ts stores the script start time in seconds
     init_ts = time.time()
@@ -108,7 +110,7 @@ for j in frequencies:
 
     while time.time() < init_ts + baselineduration:
       timestamp = time.time() - init_ts
-      print(float(timestamp),",0,",int(minpowerforplot),",", float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+      print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdLabFilter(minpowerforplot)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
       basesamples=basesamples + 1
       basecumulative=basecumulative + voltstofeet(multimeter.query(":measure:voltage:DC?"))
 
@@ -131,7 +133,7 @@ for j in frequencies:
       temptime = time.time()
       while time.time() < temptime + rfonduration:
         timestamp = time.time() - init_ts
-        print(float(timestamp),",1,", int(x),",", float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+        print(float(timestamp),",1,", int(x),",", float(pwrtopsdLabFilter(x)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
         thissamples=thissamples + 1
         thiscumulative=thiscumulative + voltstofeet(multimeter.query(":measure:voltage:DC?"))
 
@@ -142,7 +144,7 @@ for j in frequencies:
       smcv.output.state.set_value(False)   
       while time.time() < temptime + rfoffduration:
         timestamp = time.time() - init_ts
-        print(float(timestamp),",0,",int(minpowerforplot),",", float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+        print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdLabFilter(minpowerforplot)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
 
       if (abs(baseaverage - thisaverage)/baseaverage) > stopat:
         done = True

@@ -1,16 +1,17 @@
 import pandas as pd
-from powertopsd5g import pwrtopsd
+from powertopsd5g import pwrtopsdLabFilter
 
 # altitudes = [20,50,100,200,500,1000,2000,2500]
 # frequencies = [3930,3870]
 
 altitudes = [20,50,100,200,500,1000,2000,2500]
-frequencies = [3930,3870]
+frequencies = [4100,4110,4120,4130,4140,4150]
+psdonfile = True  # Earlier data collection files had no psd field, just power.
 
-filefolder="ALT-55B-May25-24-03"
+filefolder="ALT-55B-May26-24-01"
 radar="ALT-55B"
 genminpower = -25
-genmaxpower = -5
+genmaxpower = -10
 minpowerforplot = genminpower - 10
 genpwrtopsd=14.3 # Add this to 5G gen power to get PSD unless using the pwrtopsd conversion
 
@@ -86,7 +87,12 @@ for j in frequencies:
             ptile99therror = (base99thptile - this99thptile)/base99thptile * 100
             stderror = (basestd - thisstd)/basestd * 100
 
-            tmprow={'pwr': i,'psd':round(pwrtopsd(i),1),'mean': thismean,'1stptile': this1stptile,'99thptile': this99thptile,
+            if psdonfile:
+                sig5gpsd = tmppwr['psd'].iloc[0]
+            else:
+                sig5gpsd = pwrtopsdLabFilter(i)
+
+            tmprow={'pwr': i,'psd':round(sig5gpsd,1),'mean': thismean,'1stptile': this1stptile,'99thptile': this99thptile,
                             'meantest': mtest,'1stptiletest': priptile1sttest,'99ptiletest': priptile99thtest,
                             'min':thismin,'max':thismax,'std':thisstd,'meanerror':meanerror,'minerror':minerror,
                             'maxerror':maxerror,'ptile1sterror':ptile1sterror,'ptile99therror':ptile99therror,

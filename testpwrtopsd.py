@@ -1,4 +1,4 @@
-from powertopsd5g import pwrtopsd
+from powertopsd5g import pwrtopsdLabFilter
 
-for i in range (-25,1):
-    print("i = "+str(i)+" "+str(pwrtopsd(i)))
+for i in range (-25,-10):
+    print("i = "+str(i)+" "+str(pwrtopsdLabFilter(i)))

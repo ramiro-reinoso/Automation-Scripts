@@ -1,20 +1,23 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from powertopsd5g import pwrtopsd
+from powertopsd5g import pwrtopsdLabFilter
 
 # Setup variables to match the simulation
-folder="ALT-55B-May25-24-01"
+folder="ALT-55B-May26-24-01"
 radar="ALT-55B"
 genminpower = -25
-genmaxpower = -5
+genmaxpower = -10
 minpowerforplot = genminpower - 10
-genpwrtopsd=14.3 # Add this to 5G gen power to get PSD
+
 altitudes = [20,50,100,200,500,1000,2000,2500]
-frequencies = [3930,3870]
+frequencies = [4100,4110,4120,4130,4140,4150]
+psdonfile = True  # Earlier data collection files had no psd field, just power.
+
+genpwrtopsd=16.8 # Add this to 5G gen power to get PSD min and max for the plot.
 
 for j in frequencies:
-    simulation="100 MHz TM1_1 Centered at "+str(j)+" MHz No Filter"
+    simulation="100 MHz TM1_1 Centered at "+str(j)+" MHz with Filter"
 
     # Calculated plot variables
     minplotpsd=minpowerforplot + genpwrtopsd - 2
@@ -34,7 +37,8 @@ for j in frequencies:
         altaxismax=simul["alt"].max()
         altaxismax=altaxismax + 0.1*altaxismax # Give ourselves some room at the top
 
-        simul["psd"] = simul["pwr"].apply(pwrtopsd)
+        if not psdonfile:
+            simul["psd"] = simul["pwr"].apply(pwrtopsdLabFilter)
 
         ax=simul.plot("time","alt",figsize=(8,4.5))
         ax1=ax.twinx()
