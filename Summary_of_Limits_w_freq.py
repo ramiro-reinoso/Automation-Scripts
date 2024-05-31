@@ -1,9 +1,9 @@
 import pandas as pd
 
 altitudes = [20,50,100,200,500,1000,2000,2500]
-frequencies = [4100,4110,4120,4130,4140,4150]
+frequencies = [4030,4040,4050,4060,4070,4090]
 
-filefolder="ALT-55B-May26-24-01"
+filefolder="ALT-55B-May29-24-02"
 radar="ALT-55B"
 
 # Crate the output filename

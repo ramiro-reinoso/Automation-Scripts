@@ -4,13 +4,13 @@ from matplotlib.ticker import MultipleLocator
 import numpy as np
 
 # Setup variables for this simulation
-folder="ALT-55B-May26-24-01"
+folder="ALT-55B-May29-24-02"
 radar="ALT-55B"
 genminpower = -25
 genmaxpower = -10
 minpowerforplot = genminpower - 10
 
-frequencies = [4100,4110,4120,4130,4140,4150]
+frequencies = [4030,4040,4050,4060,4070,4090]
 altitudes = [20,50,100,200,500,1000,2000,2500]
 
 for j in frequencies:

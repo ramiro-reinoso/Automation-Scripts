@@ -1,17 +1,14 @@
 import pandas as pd
 from powertopsd5g import pwrtopsdLabFilter
 
-# altitudes = [20,50,100,200,500,1000,2000,2500]
-# frequencies = [3930,3870]
-
 altitudes = [20,50,100,200,500,1000,2000,2500]
-frequencies = [4100,4110,4120,4130,4140,4150]
+frequencies = [4030,4040,4050,4060,4070,4090]
 psdonfile = True  # Earlier data collection files had no psd field, just power.
 
-filefolder="ALT-55B-May26-24-01"
+filefolder="ALT-55B-May29-24-02"
 radar="ALT-55B"
-genminpower = -25
-genmaxpower = -10
+genminpower = -20
+genmaxpower = -5
 minpowerforplot = genminpower - 10
 genpwrtopsd=14.3 # Add this to 5G gen power to get PSD unless using the pwrtopsd conversion
 
