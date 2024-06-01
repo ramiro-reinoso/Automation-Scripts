@@ -24,18 +24,18 @@ def logger(logmsg):
 folder="ALT-55B-May31-24-01"
 radar="ALT-55B"
 genminpower = -20
-genmaxpower = -18
+genmaxpower = -5
 minpowerforplot = genminpower - 10
-#frequencies = [4100,4110,4120,4130,4140,4150]
-altitudes = [50,200,500]
-frequencies = [4080]
+
+altitudes = [20,50,100,200,500,1000,2000,2500]
+frequencies = [4030,4040,4050,4060,4070,4080,4090]
 
 stopat = 100  # Stop if the average altitude is stopat percent greater than baseline altitude
               # for a given power level.
 
-baselineduration = 10 # Duration of the baseline period. AVSI is 60 seconds.
-rfonduration = 5 # Duration of the RF ON period. AVSI is 20 seconds.
-rfoffduration = 5 # Duration of the RF OFF period.  AVSI is 10 seconds.
+baselineduration = 60 # Duration of the baseline period. AVSI is 60 seconds.
+rfonduration = 20 # Duration of the RF ON period. AVSI is 20 seconds.
+rfoffduration = 10 # Duration of the RF OFF period.  AVSI is 10 seconds.
 
 # Open the log file for this session and prepare for logging
 # Check if folder exists and if it doesn't exist, then create it

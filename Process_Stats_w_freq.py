@@ -2,10 +2,10 @@ import pandas as pd
 from powertopsd5g import pwrtopsdLabFilter
 
 altitudes = [20,50,100,200,500,1000,2000,2500]
-frequencies = [4030,4040,4050,4060,4070,4090]
+frequencies = [4030,4040,4050,4060,4070,4080,4090]
 psdonfile = True  # Earlier data collection files had no psd field, just power.
 
-filefolder="ALT-55B-May29-24-02"
+filefolder="ALT-55B-May31-24-01"
 radar="ALT-55B"
 genminpower = -20
 genmaxpower = -5
