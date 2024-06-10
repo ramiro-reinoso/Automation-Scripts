@@ -21,14 +21,14 @@ def logger(logmsg):
 
 
 # Setup variables for this simulation
-folder="ALT-55B-May31-24-01"
+folder="ALT-55B-Jun6-24-01"
 radar="ALT-55B"
 genminpower = -20
 genmaxpower = -5
 minpowerforplot = genminpower - 10
 
 altitudes = [20,50,100,200,500,1000,2000,2500]
-frequencies = [4030,4040,4050,4060,4070,4080,4090]
+frequencies = [4050]
 
 stopat = 100  # Stop if the average altitude is stopat percent greater than baseline altitude
               # for a given power level.

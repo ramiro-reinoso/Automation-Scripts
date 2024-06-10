@@ -4,14 +4,14 @@ import matplotlib.pyplot as plt
 from powertopsd5g import pwrtopsdLabFilter
 
 # Setup variables to match the simulation
-folder="ALT-55B-May31-24-01"
+folder="ALT-55B-Jun6-24-01"
 radar="ALT-55B"
 genminpower = -20
 genmaxpower = -5
 minpowerforplot = genminpower - 10
 
 altitudes = [20,50,100,200,500,1000,2000,2500]
-frequencies = [4030,4040,4050,4060,4070,4080,4090]
+frequencies = [4050]
 psdonfile = True  # Earlier data collection files had no psd field, just power.
 
 genpwrtopsd=16.8 # Add this to 5G gen power to get PSD min and max for the plot.
