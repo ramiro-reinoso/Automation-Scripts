@@ -21,14 +21,15 @@ def logger(logmsg):
 
 
 # Setup variables for this simulation
-folder="ALT-55B-Jun6-24-01"
+folder="ALT-55B-Jun14-24-03"
 radar="ALT-55B"
 genminpower = -20
 genmaxpower = -5
 minpowerforplot = genminpower - 10
 
-altitudes = [20,50,100,200,500,1000,2000,2500]
-frequencies = [4050]
+altitudes = [50,100,200]
+frequencies = [4050,4100]
+includeVCO = False
 
 stopat = 100  # Stop if the average altitude is stopat percent greater than baseline altitude
               # for a given power level.
@@ -122,10 +123,18 @@ for j in frequencies:
       hmc8042.write('OUTP OFF')
       hmc8042.write('OUTP:MAST OFF')
     else:
-      logger("Altitude is below 200 feet. Turn ON VCO power supply.")
-      hmc8042.write('OUTP:MAST ON')
-      hmc8042.write('INST:SEL 1')
-      hmc8042.write('OUTP ON')
+      # Turn ON the VCOs only if the flag to use VCOs in this simulation is set to True
+      if includeVCO:
+        logger("Altitude is below 200 feet. Turn ON VCO power supply.")
+        hmc8042.write('OUTP:MAST ON')
+        hmc8042.write('INST:SEL 1')
+        hmc8042.write('OUTP ON')
+      else:
+        logger("VCO flag is OFF.  Keep VCO power supply OFF")
+        hmc8042.write('INST:SEL 1')
+        hmc8042.write('OUTP OFF')
+        hmc8042.write('OUTP:MAST OFF')
+
 
     # Open the output file for writing
     if not os.path.exists(folder):
@@ -202,6 +211,7 @@ alt9000.write('RALT:TEST:STOP')
 smcv.close()
 multimeter.close()
 alt9000.close()
+hmc8042.close()
 logger("Total Simulation Time: "+str(round(time.time() - siminit,2))+" seconds.")
 exit()
 
