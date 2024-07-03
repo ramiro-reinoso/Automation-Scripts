@@ -28,7 +28,7 @@ genminpower = -20
 genmaxpower = -9
 minpowerforplot = genminpower - 10
 
-altitudes = [20,50,100,200,500,1000,2000,2500]
+altitudes = [200,500]
 frequencies = [4050]
 includeVCO = True
 includeOnBoard = True
@@ -70,6 +70,13 @@ hmc8042 = pwrsupply.open_resource("TCPIP0::10.1.1.158::5025::SOCKET")
 logger("Power Supply Resource Description: "+str(hmc8042))
 hmc8042.read_termination = '\n'
 hmc8042.write_termination = '\n'
+logger("Turning the output power of both channels OFF and master power OFF")
+hmc8042.write('OUTP:MAST OFF')
+hmc8042.write('INST:SEL 1')
+hmc8042.write('OUTP OFF')
+hmc8042.write('INST:SEL 2')
+hmc8042.write('OUTP OFF')
+
 
 # Open the session with the onboard VCO attenuator (simulates onboard radalt)
 VCOattenuator = pyvisa.ResourceManager()
@@ -78,6 +85,7 @@ rcdat6000.read_termination = '\n'
 rcdat6000.write_termination = '\n'
 logger("Opened Minicircuit Attenuator for onboard VCO control")
 logger("Attenuator description: " + str(rcdat6000))
+logger("Clearing the input queue. Last return code is " + str(rcdat6000.read()))
 
 
 # Open the ALT-9000 control session
@@ -139,16 +147,16 @@ for j in frequencies:
     logger("Altitude Simulated reported by the ALT9000: "+str(alt9000.query("RALT:ASIM:MAN:CHAN1:ALT?"))+" feet")
 
     # Set the attenuation of the onboard VCO to correspond to the simulated altitude if onboard simulation is turned on
-    logger("Setting the onboard VCO attenuator to " + str(onboardVCOatt(i)) + " dB.")
-    rcdat6000.query(":CHAN:1:SETATT:" + str(onboardVCOatt(i)))
-    logger("Return status is " + rcdat6000.read() + " and reported attenuation is " + rcdat6000.query(":ATT?"))
+    if includeOnBoard:
+      logger("Setting the onboard VCO attenuator to " + str(onboardVCOatt(i)) + " dB.")
+      rcdat6000.query(":CHAN:1:SETATT:" + str(onboardVCOatt(i)))
+      logger("Attenuation is set to " + str(rcdat6000.query(":ATT?")))
 
     # Turn OFF the VCOs for the other planes alt radar simulators if altitude is above 200 feet
     if i > 200:
       logger("Altitude is above 200 feet. Turn OFF VCO Power Supply.")
       hmc8042.write('INST:SEL 1')
       hmc8042.write('OUTP OFF')
-      hmc8042.write('OUTP:MAST OFF')
     else:
       # Turn ON the VCOs only if the flag to use VCOs in this simulation is set to True
       if includeVCO:
@@ -160,7 +168,7 @@ for j in frequencies:
         logger("VCO flag is OFF.  Keep VCO power supply OFF")
         hmc8042.write('INST:SEL 1')
         hmc8042.write('OUTP OFF')
-        hmc8042.write('OUTP:MAST OFF')
+
 
 
     # Open the output file for writing
