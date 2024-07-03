@@ -19,18 +19,22 @@ alt9000.write_termination = '\n'
 print(alt9000.query('RALT:ASIM:MODE?'))
 
 alt9000.write(':RALT:ASIM:MAN:CHAN1:RATE 0')
-alt9000.write(':RALT:ASIM:MAN:CHAN1:START 100')
+alt9000.write(':RALT:ASIM:MAN:CHAN1:START 800')
 print(alt9000.query(':RALT:ASIM:MAN:CHAN1:START?'))
 print(alt9000.query(':RALT:ASIM:MAN:CHAN1:RATE?'))
 
 # #print(multimeter.query(":function:voltage:DC"))
 #alt9000.ignore_warning()
 alt9000.write('RALT:TEST:STAR')
+time.sleep(3)
+alt9000.write('RALT:TEST:PAUS')
 time.sleep(10)
 if alt9000.query(':RALT:TEST:RUNN?'):
     print('Test running')
-time.sleep(10)
+print("Loop Loss Value: " + alt9000.query(':RALT:SET:CHAN1:LLOSs?'))
+time.sleep(3)
 alt9000.write('RALT:TEST:STOP')
+time.sleep(2)
 
 
 #print(alt9000.query('RALTimeter:ASIMulation:MANual:CHANnel1:ALTitude 200'))

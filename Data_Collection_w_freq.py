@@ -12,7 +12,8 @@ import os
 
 # import local functions
 from alt55B_volts_to_feet import voltstofeet
-from powertopsd5g import pwrtopsdLabFilter
+from powertopsd5g import pwrtopsdFinalV1
+from altitudeToVCOAttenuation import onboardVCOatt
 
 def logger(logmsg):
     print(str(datetime.datetime.now())+"\t"+logmsg)
@@ -21,15 +22,16 @@ def logger(logmsg):
 
 
 # Setup variables for this simulation
-folder="ALT-55B-Jun14-24-03"
+folder="ALT-55B-Jul-3-24-01"
 radar="ALT-55B"
 genminpower = -20
-genmaxpower = -5
+genmaxpower = -9
 minpowerforplot = genminpower - 10
 
-altitudes = [50,100,200]
-frequencies = [4050,4100]
-includeVCO = False
+altitudes = [20,50,100,200,500,1000,2000,2500]
+frequencies = [4050]
+includeVCO = True
+includeOnBoard = True
 
 stopat = 100  # Stop if the average altitude is stopat percent greater than baseline altitude
               # for a given power level.
@@ -69,6 +71,14 @@ logger("Power Supply Resource Description: "+str(hmc8042))
 hmc8042.read_termination = '\n'
 hmc8042.write_termination = '\n'
 
+# Open the session with the onboard VCO attenuator (simulates onboard radalt)
+VCOattenuator = pyvisa.ResourceManager()
+rcdat6000 = VCOattenuator.open_resource("TCPIP0::10.1.1.159::23::SOCKET")
+rcdat6000.read_termination = '\n'
+rcdat6000.write_termination = '\n'
+logger("Opened Minicircuit Attenuator for onboard VCO control")
+logger("Attenuator description: " + str(rcdat6000))
+
 
 # Open the ALT-9000 control session
 viavi = pyvisa.ResourceManager()
@@ -99,6 +109,18 @@ alt9000.write('RALT:TEST:STAR')
 time.sleep(10)
 alt9000.write('RALT:TEST:PAUS')
 
+# Turn the power supply for the onboard VCO if the onboard VCO simulation flag is on
+if includeOnBoard:
+  logger("Onboard VCO simulation flag is True.  Turning on the onboard VCO power supply.")
+  hmc8042.write('OUTP:MAST ON')
+  hmc8042.write('INST:SEL 2')
+  hmc8042.write('OUTP ON')
+else:
+  logger("Onboard VCO simulation flag is False.  Turningn OFF the onboard VCO power supply.")
+  hmc8042.write('OUTP:MAST ON')
+  hmc8042.write('INST:SEL 2')
+  hmc8042.write('OUTP OFF')
+
 # Start the loop to cycle through 5G carrier center frequencies
 for j in frequencies:
   logger("Collecting data using a 5G carrier with Center Frequency "+str(j)+" MHz")
@@ -115,6 +137,11 @@ for j in frequencies:
 
     logger('Desired Altitude: '+str(i)+' feet')
     logger("Altitude Simulated reported by the ALT9000: "+str(alt9000.query("RALT:ASIM:MAN:CHAN1:ALT?"))+" feet")
+
+    # Set the attenuation of the onboard VCO to correspond to the simulated altitude if onboard simulation is turned on
+    logger("Setting the onboard VCO attenuator to " + str(onboardVCOatt(i)) + " dB.")
+    rcdat6000.query(":CHAN:1:SETATT:" + str(onboardVCOatt(i)))
+    logger("Return status is " + rcdat6000.read() + " and reported attenuation is " + rcdat6000.query(":ATT?"))
 
     # Turn OFF the VCOs for the other planes alt radar simulators if altitude is above 200 feet
     if i > 200:
@@ -160,7 +187,7 @@ for j in frequencies:
 
     while time.time() < init_ts + baselineduration:
       timestamp = time.time() - init_ts
-      print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdLabFilter(minpowerforplot)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+      print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV1(minpowerforplot)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
       basesamples=basesamples + 1
       basecumulative=basecumulative + voltstofeet(multimeter.query(":measure:voltage:DC?"))
 
@@ -185,7 +212,7 @@ for j in frequencies:
       temptime = time.time()
       while time.time() < temptime + rfonduration:
         timestamp = time.time() - init_ts
-        print(float(timestamp),",1,", int(x),",", float(pwrtopsdLabFilter(x)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+        print(float(timestamp),",1,", int(x),",", float(pwrtopsdFinalV1(x)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
         thissamples=thissamples + 1
         thiscumulative=thiscumulative + voltstofeet(multimeter.query(":measure:voltage:DC?"))
 
@@ -196,7 +223,7 @@ for j in frequencies:
       smcv.output.state.set_value(False)   
       while time.time() < temptime + rfoffduration:
         timestamp = time.time() - init_ts
-        print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdLabFilter(minpowerforplot)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+        print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV1(minpowerforplot)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
 
       if (abs(baseaverage - thisaverage)/baseaverage) > stopat:
         done = True
@@ -204,7 +231,7 @@ for j in frequencies:
     outfile.close()
 
 
-
+# Stop and close all instruments
 alt9000.write('RALT:TEST:RES')
 time.sleep(2)
 alt9000.write('RALT:TEST:STOP')
@@ -212,6 +239,7 @@ smcv.close()
 multimeter.close()
 alt9000.close()
 hmc8042.close()
+rcdat6000.close()
 logger("Total Simulation Time: "+str(round(time.time() - siminit,2))+" seconds.")
 exit()
 
