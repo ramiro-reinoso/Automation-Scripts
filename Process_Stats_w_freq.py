@@ -1,18 +1,13 @@
 import pandas as pd
 from powertopsd5g import pwrtopsdLabFilter
 
-altitudes = [20,50,100,200,500,1000,2000,2500]
-frequencies = [4050,4100]
+altitudes = [200,500]
+frequencies = [3950]
 psdonfile = True  # Earlier data collection files had no psd field, just power.
 
-filefolder="ALT-55B-Jun14-24-01"
+filefolder="ALT-55B-Jul18-24-04"
 radar="ALT-55B"
-genminpower = -20
-genmaxpower = -5
-minpowerforplot = genminpower - 10
-genpwrtopsd=14.3 # Add this to 5G gen power to get PSD unless using the pwrtopsd conversion
-
-
+genpoweroffdelta = 10
 
 # Calculate the statistics
 
@@ -40,6 +35,11 @@ for j in frequencies:
                             'std':[basestd],'meanerror':["N/A"],'minerror':["N/A"],
                             'maxerror':["N/A"],'ptile1sterror':["N/A"],'ptile99therror':["N/A"],'stderror':["N/A"]})
 
+        genminpower = simul['pwr'].min()
+        genmaxpower = simul['pwr'].max()
+        genminpower = genminpower + genpoweroffdelta
+
+#        print("Min = "+str(genminpower)+" Max = "+str(genmaxpower))
 
         for i in range(genminpower,genmaxpower):
             tmppwr=simul[simul["pwr"] == i]
@@ -89,11 +89,11 @@ for j in frequencies:
             else:
                 sig5gpsd = pwrtopsdLabFilter(i)
 
-            tmprow={'pwr': i,'psd':round(sig5gpsd,1),'mean': thismean,'1stptile': this1stptile,'99thptile': this99thptile,
+            tmprow={'pwr': i,'psd':round(sig5gpsd,1),'mean': round(thismean,1),'1stptile': round(this1stptile,1),'99thptile': round(this99thptile,1),
                             'meantest': mtest,'1stptiletest': priptile1sttest,'99ptiletest': priptile99thtest,
-                            'min':thismin,'max':thismax,'std':thisstd,'meanerror':meanerror,'minerror':minerror,
-                            'maxerror':maxerror,'ptile1sterror':ptile1sterror,'ptile99therror':ptile99therror,
-                            'stderror':stderror}
+                            'min':round(thismin,1),'max':round(thismax,1),'std':round(thisstd,1),'meanerror':round(meanerror,1),'minerror':round(minerror,1),
+                            'maxerror':round(maxerror,1),'ptile1sterror':round(ptile1sterror,1),'ptile99therror':round(ptile99therror,1),
+                            'stderror':round(stderror,1)}
             
             outdf = outdf._append(tmprow, ignore_index=True)
 

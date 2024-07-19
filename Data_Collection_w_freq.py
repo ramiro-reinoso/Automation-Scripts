@@ -22,23 +22,25 @@ def logger(logmsg):
 
 
 # Setup variables for this simulation
-folder="ALT-55B-Jul-3-24-01"
+folder="ALT-55B-Jul18-24-04"
 radar="ALT-55B"
 genminpower = -20
-genmaxpower = -9
-minpowerforplot = genminpower - 10
+genmaxpower = -5
+minpowerforplot = genminpower - 10  # This is the power logged with the 5G Gen OFF.  This is set to 10 dB min power to help with the graphs.
 
 altitudes = [200,500]
-frequencies = [4050]
+frequencies = [3950]
 includeVCO = True
 includeOnBoard = True
+stopwhenexceed = True # Stop increasing power if the altitude mean error has exceeded a threshold give by "stopat"
 
-stopat = 100  # Stop if the average altitude is stopat percent greater than baseline altitude
-              # for a given power level.
+stopat = 0.02  # Stop if the average altitude is stopat percent greater than baseline altitude
+              # for a given power level.  The variable stopwhenexceed must be True to enable this function.  Range [0 to 0.99].
 
 baselineduration = 60 # Duration of the baseline period. AVSI is 60 seconds.
 rfonduration = 20 # Duration of the RF ON period. AVSI is 20 seconds.
 rfoffduration = 10 # Duration of the RF OFF period.  AVSI is 10 seconds.
+waittostable = 2 # Wait for this number of seconds after making changes to allow for radalt to stabilize
 
 # Open the log file for this session and prepare for logging
 # Check if folder exists and if it doesn't exist, then create it
@@ -204,16 +206,15 @@ for j in frequencies:
     logger("Start data collection")
 
     # Start the sweep
-    done = False
+
     for x in range(genminpower, genmaxpower):
-      if done:
-        break   # No need to go further as the radar failed the last power level tests
+
 
       smcv.source.power.level.immediate.set_amplitude(x)
       
       logger("5G Center Frequency "+str(j)+" MHz, Altitude "+str(i)+" feet, 5G Output Power Level "+ str(x)+" dBm")
       smcv.output.state.set_value(True)
-      time.sleep(2)  # Wait before collecting sample to avoid any transient effects
+      time.sleep(waittostable)  # Wait before collecting sample to avoid any transient effects
       thissamples=0
       thisaverage=0.0
       thiscumulative=0.0
@@ -233,13 +234,18 @@ for j in frequencies:
         timestamp = time.time() - init_ts
         print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV1(minpowerforplot)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
 
-      if (abs(baseaverage - thisaverage)/baseaverage) > stopat:
-        done = True
+      # Stop the test for this frequency and altitude combination if the altitude average exceeds a predefined threshold
+      if (stopwhenexceed and ((abs(baseaverage - thisaverage)/baseaverage) > stopat)):
+        logger("Stopped simulation on exceeding baseline average.  Baseline average = "+str(baseaverage)+" feet. This run average = "+str(thisaverage)+" feet.")
+        logger("Stopped at "+str(x)+" dBm.  Min power for simulation is "+str(genminpower)+" dBm and Max power is "+str(genmaxpower)+" dBm.")
+
+        break   # No need to go further as the radar failed the last power level tests
     
     outfile.close()
 
 
 # Stop and close all instruments
+hmc8042.write('OUTP:MAST OFF')
 alt9000.write('RALT:TEST:RES')
 time.sleep(2)
 alt9000.write('RALT:TEST:STOP')
