@@ -1,0 +1,19 @@
+{
+    "Description": "Simulation to compare to AVSI",
+    "5Gfilter": true,
+    "folder": "ALT-55B-Jul30-24-01",
+    "radar": "ALT-55B",
+    "genminpower": -20,
+    "genmaxpower": -5,
+    "deltatopwroff": 10,
+    "altitudes": [200,500,1000,2000],
+    "frequencies" : [3950,4000,4050,4100,4150],
+    "includeOtherPlanes": true,
+    "includeOnBoard": true,
+    "stopwhenexceed": true,
+    "stoplimit": 0.02,
+    "baselineduration": 60,
+    "rfonduration": 20,
+    "rfoffduration": 10,
+    "waittostable": 2
+}

@@ -1,3 +1,10 @@
+#######################################################################
+#                                                                     #
+#  ALTIMETER RADAR TEST CONTROL SOFTWARE FOR SES TESTBED              #
+#  Copyright SES Americom, Inc.                                       #
+#                                                                     #
+#######################################################################
+
 # using time module
 import time
 # import the datetime library for logging date and time
@@ -10,37 +17,56 @@ import pyvisa
 # import file libraries
 import os
 
+#import the JSON utilities
+import json
+
 # import local functions
 from alt55B_volts_to_feet import voltstofeet
 from powertopsd5g import pwrtopsdFinalV1
 from altitudeToVCOAttenuation import onboardVCOatt
 
+# Subrouting to log and display simulation messages
 def logger(logmsg):
     print(str(datetime.datetime.now())+"\t"+logmsg)
     global logfile
     print(str(datetime.datetime.now())+"\t"+logmsg,file=logfile)
 
 
-# Setup variables for this simulation
-folder="ALT-55B-Jul18-24-04"
-radar="ALT-55B"
-genminpower = -20
-genmaxpower = -5
-minpowerforplot = genminpower - 10  # This is the power logged with the 5G Gen OFF.  This is set to 10 dB min power to help with the graphs.
 
-altitudes = [200,500]
-frequencies = [3950]
-includeVCO = True
-includeOnBoard = True
-stopwhenexceed = True # Stop increasing power if the altitude mean error has exceeded a threshold give by "stopat"
 
-stopat = 0.02  # Stop if the average altitude is stopat percent greater than baseline altitude
+# Read the simulation configuratin from the JSON files
+# Open the main config file and extract the jSON filename where the
+# simulation parameters are defined
+baseconfig=open('json_configs\\Simulation.json','r')
+basedata=json.load(baseconfig)
+filename=basedata['ConfigFile']
+# Open the JSON file with he detail configuration parameters for the simulation
+configfilename="json_configs\\"+filename
+jsonfile=open(configfilename)
+configs=json.load(jsonfile)
+
+# Setup variables for this simulation using he values in the JSON config file
+folder=configs['folder']
+radar=configs['radar']
+genminpower=configs['genminpower']
+genmaxpower = configs['genmaxpower']
+deltatopwroff = configs['deltatopwroff']
+minpowerforplot = genminpower - deltatopwroff  # This is the power logged with the 5G Gen OFF.  This is set to 10 dB min power to help with the graphs.
+
+altitudes = configs['altitudes']
+frequencies = configs['frequencies']
+includeVCO = configs['includeOtherPlanes']
+includeOnBoard = configs['includeOnBoard']
+stopwhenexceed = configs['stopwhenexceed'] # Stop increasing power if the altitude mean error has exceeded a threshold give by "stopat"
+
+stopat = configs['stoplimit']  # Stop if the average altitude is stopat percent greater than baseline altitude
               # for a given power level.  The variable stopwhenexceed must be True to enable this function.  Range [0 to 0.99].
 
-baselineduration = 60 # Duration of the baseline period. AVSI is 60 seconds.
-rfonduration = 20 # Duration of the RF ON period. AVSI is 20 seconds.
-rfoffduration = 10 # Duration of the RF OFF period.  AVSI is 10 seconds.
-waittostable = 2 # Wait for this number of seconds after making changes to allow for radalt to stabilize
+baselineduration = configs['baselineduration'] # Duration of the baseline period. AVSI is 60 seconds.
+rfonduration = configs['rfonduration'] # Duration of the RF ON period. AVSI is 20 seconds.
+rfoffduration = configs['rfoffduration'] # Duration of the RF OFF period.  AVSI is 10 seconds.
+waittostable = configs['waittostable'] # Wait for this number of seconds after making changes to allow for radalt to stabilize
+
 
 # Open the log file for this session and prepare for logging
 # Check if folder exists and if it doesn't exist, then create it
@@ -53,6 +79,23 @@ logger("******************************")
 logger("******************************")
 logger("Start a new Test")
 siminit=time.time()
+
+# Log the simulation configuration
+logger("folder: " + folder)
+logger("radar: " + radar)
+logger("genminpower: "+str(genminpower))
+logger("genmaxpower : " + str(genmaxpower))
+logger("deltatopwroff : "+ str(deltatopwroff))
+logger("altitudes : "+ str(altitudes))
+logger("frequencies : "+ str(frequencies))
+logger("includeVCO : "+ str(includeVCO))
+logger("includeOnBoard : "+ str(includeOnBoard))
+logger("stopwhenexceed : "+ str(stopwhenexceed)) 
+logger("stopat : "+ str(stopat))
+logger("baselineduration : "+ str(baselineduration))
+logger("rfonduration : "+ str(rfonduration))
+logger("rfoffduration : "+ str(rfoffduration))
+logger("waittostable : "+ str(waittostable))
 
 # Open the session with the Signal Generator
 RsSmcv.assert_minimum_version('5.0.122')
