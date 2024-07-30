@@ -61,6 +61,7 @@ def pwrtopsdLabFilter(power):
 # the Pasternack waveguide adapters for the filters, all four waveguide adapters.  Previous versions
 # used the two Maury calibrated waveguide adapters while waiting for the Pasternack lab adapters.
 # Calibration data collected on June 26.
+# Correction for the monitoring port is 33.8 dB when a 30 dB attenuator is connected to it.
 def pwrtopsdFinalV1(power):
   power = float(power)
   psd = -999
