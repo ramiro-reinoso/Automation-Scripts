@@ -1,12 +1,24 @@
 import pandas as pd
+import json
 
-altitudes = [200,500,1000,2000]
-frequencies = [3850,3900]
+# Read the simulation configuratin from the JSON files
+# Open the main config file and extract the jSON filename where the
+# simulation parameters are defined
+baseconfig=open('json_configs\\Statistics.json','r')
+basedata=json.load(baseconfig)
+filename=basedata['ConfigFile']
+# Open the JSON file with he detail configuration parameters for the simulation
+configfilename="json_configs\\"+filename
+jsonfile=open(configfilename)
+configs=json.load(jsonfile)
 
-filefolder="ALT-55B-Jul18-24-04"
-radar="ALT-55B"
+# Setup variables used in the simulation
+filefolder = configs['folder']
+radar = configs['radar']
+altitudes = configs['altitudes']
+frequencies = configs['frequencies']
 
-# Crate the output filename
+# Create the output filename
 outfilename=filefolder+"\\"+radar+"_summary.csv"
 
 # Create the output Pandas DataFrame
@@ -23,6 +35,11 @@ for j in frequencies:
         # Open the statistics file for this altitude and create a Pandas DataFrame
         infilename=filefolder+"\\"+radar+"_"+str(j)+"_"+str(x)+"_stats.csv"
         stats=pd.read_csv(infilename)
+
+        # Test if there are no rows in the dataframe.  If the dataframe is empty,
+        # process the next file
+        if stats.shape[0] < 2:
+            continue
 
         # Drop the first row as it contains the baseline statistics which we don't need
         stats = stats.drop([0])
@@ -86,6 +103,8 @@ for j in frequencies:
                             'lastgood': round(good,1),'limit': "N/A"}
             
         outdf = outdf._append(tmprow, ignore_index=True)
+
+print("\nCompleted processing.  Results are written to " + outfilename)
 
 outdf.to_csv(outfilename)
 

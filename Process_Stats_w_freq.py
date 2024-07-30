@@ -1,13 +1,29 @@
 import pandas as pd
+import json
 from powertopsd5g import pwrtopsdLabFilter
 
-altitudes = [200,500]
-frequencies = [3950]
-psdonfile = True  # Earlier data collection files had no psd field, just power.
+# Read the simulation configuratin from the JSON files
+# Open the main config file and extract the jSON filename where the
+# simulation parameters are defined
+baseconfig=open('json_configs\\Statistics.json','r')
+basedata=json.load(baseconfig)
+filename=basedata['ConfigFile']
+# Open the JSON file with he detail configuration parameters for the simulation
+configfilename="json_configs\\"+filename
+jsonfile=open(configfilename)
+configs=json.load(jsonfile)
 
-filefolder="ALT-55B-Jul18-24-04"
-radar="ALT-55B"
-genpoweroffdelta = 10
+# Setup variables used in the simulation
+filefolder = configs['folder']
+radar = configs['radar']
+genpoweroffdelta = configs['deltatopwroff']
+altitudes = configs['altitudes']
+frequencies = configs['frequencies']
+psdonfile = configs['psdonfile']  # Earlier data collection files had no psd field, just power.
+
+if not psdonfile:
+    print("WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** ")
+    print("WARNING: the 5G signal PSD will be re-calculated because it is not in the data collection file.")
 
 # Calculate the statistics
 

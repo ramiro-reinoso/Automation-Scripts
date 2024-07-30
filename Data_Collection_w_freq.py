@@ -81,6 +81,7 @@ logger("Start a new Test")
 siminit=time.time()
 
 # Log the simulation configuration
+logger("***************** CONFIGURATION ***********************")
 logger("folder: " + folder)
 logger("radar: " + radar)
 logger("genminpower: "+str(genminpower))
@@ -96,6 +97,7 @@ logger("baselineduration : "+ str(baselineduration))
 logger("rfonduration : "+ str(rfonduration))
 logger("rfoffduration : "+ str(rfoffduration))
 logger("waittostable : "+ str(waittostable))
+logger("***************** OPEN DEVICES ***********************")
 
 # Open the session with the Signal Generator
 RsSmcv.assert_minimum_version('5.0.122')
@@ -174,6 +176,7 @@ else:
   hmc8042.write('INST:SEL 2')
   hmc8042.write('OUTP OFF')
 
+logger("************************* START SIMULATION ****************************")
 # Start the loop to cycle through 5G carrier center frequencies
 for j in frequencies:
   logger("Collecting data using a 5G carrier with Center Frequency "+str(j)+" MHz")

@@ -1,21 +1,45 @@
 import pandas as pd
+import json
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 import numpy as np
 
 # Setup variables for this simulation
-folder="ALT-55B-Jul18-24-03"
-radar="ALT-55B"
+# Read the simulation configuratin from the JSON files
+# Open the main config file and extract the jSON filename where the
+# simulation parameters are defined
+baseconfig=open('json_configs\\Statistics.json','r')
+basedata=json.load(baseconfig)
+filename=basedata['ConfigFile']
+# Open the JSON file with he detail configuration parameters for the simulation
+configfilename="json_configs\\"+filename
+jsonfile=open(configfilename)
+configs=json.load(jsonfile)
 
-frequencies = [3850,3900,3950,4000]
-altitudes = [200,500,1000,2000]
+# Setup variables used in the simulation
+folder = configs['folder']
+radar = configs['radar']
+altitudes = configs['altitudes']
+frequencies = configs['frequencies']
+test5Gsignal = configs['5Gtestsignal']
+filter5G = configs['5Gfilter']
+
+if filter5G:
+    filtered="with 5G Filter"
+else:
+    filtered="without 5G Filter"
+
+
+# Start the plots
 
 for j in frequencies:
+    simulation = test5Gsignal + " Centered at " + str(j) + " MHz " + filtered
+
     for x in altitudes:
         infilename=folder+"\\"+radar+"_"+str(j)+"_"+str(x)+"_stats.csv"
         outfilename=folder+"\\"+radar+"_"+str(j)+"_"+str(x)+"_stats.png"
 
-        plottitle=radar+": IBE Test 100 MHz 5G signal at Center Freq "+str(j)+" MHz for "+str(x)+" feet"
+        plottitle=radar+" at "+str(x)+" ft with "+simulation
 
         print("Processing "+infilename)
         df=pd.read_csv(infilename)
