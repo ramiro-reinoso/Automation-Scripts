@@ -1,0 +1,21 @@
+{
+    "Description": "Simulation to verify comparison to AVSI with 5G filter and validate previous tests",
+    "5Gtestsignal": "100 MHz TM1-1",
+    "5Gfilter": true,
+    "folder": "ALT-55B-Aug09-24-05",
+    "radar": "ALT-55B",
+    "genminpower": -18,
+    "genmaxpower": -5,
+    "deltatopwroff": 10,
+    "altitudes": [200,500,1000,2000],
+    "frequencies" : [4130],
+    "includeOtherPlanes": true,
+    "includeOnBoard": true,
+    "stopwhenexceed": true,
+    "stoplimit": 0.02,
+    "baselineduration": 60,
+    "rfonduration": 20,
+    "rfoffduration": 10,
+    "waittostable": 2,
+    "psdonfile": true
+}

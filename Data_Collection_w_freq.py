@@ -34,7 +34,10 @@ def logger(logmsg):
 
 
 
-# Read the simulation configuratin from the JSON files
+# Read the simulation configuration from the JSON files.  There are two JSON files that need to be
+# processed.  The first one is the Simulation.json file that containts the name of the JSON file with
+# all the details pertaining to the simulation.  All the JSON files are in the json_configs folder.
+
 # Open the main config file and extract the jSON filename where the
 # simulation parameters are defined
 baseconfig=open('json_configs\\Simulation.json','r')
@@ -46,6 +49,8 @@ jsonfile=open(configfilename)
 configs=json.load(jsonfile)
 
 # Setup variables for this simulation using he values in the JSON config file
+desc=configs['Description']
+signalprofile=configs['5Gtestsignal']
 folder=configs['folder']
 radar=configs['radar']
 genminpower=configs['genminpower']
@@ -57,6 +62,7 @@ altitudes = configs['altitudes']
 frequencies = configs['frequencies']
 includeVCO = configs['includeOtherPlanes']
 includeOnBoard = configs['includeOnBoard']
+filter5G = configs['5Gfilter']
 stopwhenexceed = configs['stopwhenexceed'] # Stop increasing power if the altitude mean error has exceeded a threshold give by "stopat"
 
 stopat = configs['stoplimit']  # Stop if the average altitude is stopat percent greater than baseline altitude
@@ -82,6 +88,8 @@ siminit=time.time()
 
 # Log the simulation configuration
 logger("***************** CONFIGURATION ***********************")
+logger("Description: " + desc)
+logger("5G Signal Profile: " + signalprofile)
 logger("folder: " + folder)
 logger("radar: " + radar)
 logger("genminpower: "+str(genminpower))
@@ -91,6 +99,7 @@ logger("altitudes : "+ str(altitudes))
 logger("frequencies : "+ str(frequencies))
 logger("includeVCO : "+ str(includeVCO))
 logger("includeOnBoard : "+ str(includeOnBoard))
+logger("5GFilter: " + str(filter5G))
 logger("stopwhenexceed : "+ str(stopwhenexceed)) 
 logger("stopat : "+ str(stopat))
 logger("baselineduration : "+ str(baselineduration))
