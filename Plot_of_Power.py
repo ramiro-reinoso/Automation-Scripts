@@ -58,16 +58,18 @@ for j in frequencies:
 
 
 
-
-        altaxismax=simul["alt"].max()
+        # Calculate the altitude range for plot
+        altaxismax=simul["alt"].max()  # This is the maximum altitude collected
         altaxismax=altaxismax + 0.1*altaxismax # Give ourselves some room at the top
+        altaxismin=simul["alt"].min()  # This is the minimum altitude collected
+        altaxismin=altaxismin - 0.1*altaxismin # Give ourselves some room at the bottom
 
         if not psdonfile:
             simul["psd"] = simul["pwr"].apply(pwrtopsdLabFilter)
 
         # Calculate power range for plot
         minplotpsd=simul["psd"].min() - 2   # Minimum PSD when 5G gen if OFF with a little more room.
-        maxplotpsd=simul["psd"].max()
+        maxplotpsd=simul["psd"].max() + 2   # Maximum PSD when 5G gen is ON with a little more room.
         
 
         ax=simul.plot("time","alt",figsize=(8,4.5))
@@ -75,7 +77,7 @@ for j in frequencies:
         simul.plot("time","psd",ax=ax1,color="orange")
         ax.legend().set_visible(False)
         ax1.legend().set_visible(False)
-        ax.set_ylim([0,altaxismax])
+        ax.set_ylim([altaxismin,altaxismax])
         ax1.set_ylim([minplotpsd,maxplotpsd])
         ax.set_title(plottitle)
         ax.set_xlabel("Elapsed Time (seconds)")

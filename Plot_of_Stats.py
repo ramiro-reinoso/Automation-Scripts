@@ -71,7 +71,7 @@ for j in frequencies:
         #ax.set_xlim(0,25)
         ax.xaxis.set_major_locator(MultipleLocator(0.5))
 
-        plt.ylim([-80,80])
+        plt.ylim([-2.5,2.5])
         plt.grid(visible=True)
         plt.title(plottitle)
 
