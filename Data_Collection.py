@@ -22,7 +22,7 @@ import json
 
 # import local functions
 from alt55B_volts_to_feet import voltstofeet
-from powertopsd5g import pwrtopsdFinalV1
+from powertopsd5g import pwrtopsdFinalV2
 from altitudeToVCOAttenuation import onboardVCOatt
 
 # Subrouting to log and display simulation messages
@@ -252,7 +252,7 @@ for j in frequencies:
 
     while time.time() < init_ts + baselineduration:
       timestamp = time.time() - init_ts
-      print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV1(minpowerforplot)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+      print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV2(minpowerforplot)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
       basesamples=basesamples + 1
       basecumulative=basecumulative + voltstofeet(multimeter.query(":measure:voltage:DC?"))
 
@@ -276,7 +276,7 @@ for j in frequencies:
       temptime = time.time()
       while time.time() < temptime + rfonduration:
         timestamp = time.time() - init_ts
-        print(float(timestamp),",1,", int(x),",", float(pwrtopsdFinalV1(x)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+        print(float(timestamp),",1,", int(x),",", float(pwrtopsdFinalV2(x)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
         thissamples=thissamples + 1
         thiscumulative=thiscumulative + voltstofeet(multimeter.query(":measure:voltage:DC?"))
 
@@ -287,7 +287,7 @@ for j in frequencies:
       smcv.output.state.set_value(False)   
       while time.time() < temptime + rfoffduration:
         timestamp = time.time() - init_ts
-        print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV1(minpowerforplot)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+        print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV2(minpowerforplot)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
 
       # Stop the test for this frequency and altitude combination if the altitude average exceeds a predefined threshold
       if (stopwhenexceed and ((abs(baseaverage - thisaverage)/baseaverage) > stopat)):

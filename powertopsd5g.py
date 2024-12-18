@@ -96,3 +96,56 @@ def pwrtopsdFinalV1(power):
     psd = -999.0
 
   return psd
+
+# VERSION Final V2: This version is based on the configuration for V1 but with isolators installed at the input of the
+# combiner port coming from the ALT-9000 receive port and the input of the combiner coming from the RF amplifier.  These 
+# isolators added insertion loss and hence the need to re-calibrate.
+# The calibration used a 5G 100 MHz signal centered at 4300 MHz.
+# Calibration data collected on December 18, 2024.
+# 
+def pwrtopsdFinalV2(power):
+  power = float(power)
+  psd = -999
+
+  if power < -12.0:
+    psd = power + 17.5
+  elif ((power >= -12.0) and (power < -11.0)):
+    psd = interpol(power,-12.0,17.5,-11.0,17.2)
+  elif (power >= -11.0) and (power < -10.0):
+    psd = interpol(power,-11.0,17.2,-10.0,17.0)
+  elif (power >= -10.0) and (power < -9.0):
+    psd = interpol(power,-10.0,17.0,-9.0,16.7)
+  elif (power >= -9.0) and (power < -8.0):
+    psd = interpol(power,-9.0,16.7,-8.0,16.4)
+  elif (power >= -8.0) and (power < -7.0):
+    psd = interpol(power,-8.0,16.4,-7.0,16.0)
+  elif (power >= -7.0) and (power < -6.0):
+    psd = interpol(power,-7.0,16.0,-6.0,15.5)
+  elif (power >= -6.0) and (power < -5.0):
+    psd = interpol(power,-6.0,15.5,-5.0,15.0)
+  elif (power >= -5.0) and (power < -4.0):
+    psd = interpol(power,-5.0,15.0,-4.0,14.4)
+  elif (power >= -4.0) and (power < -3.0):
+    psd = interpol(power,-4.0,14.4,-3.0,13.8)
+  elif (power >= -3.0) and (power < -2.0):
+    psd = interpol(power,-3.0,13.8,-2.0,13.1)
+  elif (power >= -2.0) and (power < -1.0):
+    psd = interpol(power,-2.0,13.1,-1.0,12.45)
+  elif (power >= -1.0) and (power <= 0.0):
+    psd = interpol(power,-1.0,12.45,0.0,11.65)
+  else:
+    psd = -999.0
+
+  return psd
+
+def interpol(pwr,lowbound,lowlimit,highbound,highlimit):
+  pwr=float(pwr)
+  lowlimit=float(lowlimit)
+  highlimit=float(highlimit)
+  lowbound=float(lowbound)
+  highbound=float(highbound)
+
+  rate=(highlimit - lowlimit) / (highbound - lowbound)
+
+  return pwr + lowlimit + rate * (pwr - lowbound)
+
