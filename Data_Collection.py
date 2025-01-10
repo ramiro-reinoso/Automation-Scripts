@@ -156,7 +156,7 @@ time.sleep(2)
 #Set the Tx and Rx cable losses for the simulation as measured
 alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:TX 1.3")
 alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:RX 1.3")
-alt9000.write(":RALT:SET:CHAN1:LOSS:EXT:RX 8.7")
+alt9000.write(":RALT:SET:CHAN1:LOSS:EXT:RX 9.7")
 # Set the ALT9000 to manual mode and fixed altitude
 alt9000.write(':RALT:ASIM:MODE MAN')
 alt9000.write(':RALT:ASIM:MAN:CHAN1:RATE 0')
