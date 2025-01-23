@@ -1,0 +1,21 @@
+{
+    "Description": "Calspan ALT-55B Radalt OOBE Testing",
+    "5Gtestsignal": "100 MHz White Noise Generator",
+    "5Gfilter": false,
+    "folder": "CSPAN-ALT-55B-Jan22-25-02",
+    "radar": "ALT-55B",
+    "genminpower": -55,
+    "genmaxpower": -25,
+    "deltatopwroff": 10,
+    "altitudes": [50,100,200,500,1000,2000,2500],
+    "frequencies" : [4300],
+    "includeOtherPlanes": true,
+    "includeOnBoard": true,
+    "stopwhenexceed": true,
+    "stoplimit": 0.02,
+    "baselineduration": 60,
+    "rfonduration": 20,
+    "rfoffduration": 10,
+    "waittostable": 2,
+    "psdonfile": true
+}

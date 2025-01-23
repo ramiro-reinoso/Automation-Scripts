@@ -276,7 +276,10 @@ for j in frequencies:
       temptime = time.time()
       while time.time() < temptime + rfonduration:
         timestamp = time.time() - init_ts
+    #   This conversion is the standard conversion for IBE testing.    
         print(float(timestamp),",1,", int(x),",", float(pwrtopsdFinalV2(x)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+    #   This conversion was used at Calspsn for the OOBE testing.  The path losses are 6.4 dB and the conversion to dBm/MHz is 20 dB.
+    #   print(float(timestamp),",1,", int(x),",", float(x - 6.4 - 20),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
         thissamples=thissamples + 1
         thiscumulative=thiscumulative + voltstofeet(multimeter.query(":measure:voltage:DC?"))
 

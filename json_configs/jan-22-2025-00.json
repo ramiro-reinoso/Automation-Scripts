@@ -1,0 +1,21 @@
+{
+    "Description": "Calspan ALT-55B Radalt 21043-02",
+    "5Gtestsignal": "100 MHz TM1-1",
+    "5Gfilter": true,
+    "folder": "CSPAN-ALT-55B-Jan22-25-00",
+    "radar": "ALT-55B",
+    "genminpower": -15,
+    "genmaxpower": -5,
+    "deltatopwroff": 10,
+    "altitudes": [200,500,1000,2000,2500],
+    "frequencies" : [4150],
+    "includeOtherPlanes": true,
+    "includeOnBoard": true,
+    "stopwhenexceed": true,
+    "stoplimit": 0.02,
+    "baselineduration": 60,
+    "rfonduration": 20,
+    "rfoffduration": 10,
+    "waittostable": 2,
+    "psdonfile": true
+}
