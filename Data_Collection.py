@@ -22,7 +22,7 @@ import json
 
 # import local functions
 from alt55B_volts_to_feet import voltstofeet
-from powertopsd5g import pwrtopsdFinalV2
+from powertopsd5g import pwrtopsdFinalV3
 from altitudeToVCOAttenuation import onboardVCOatt
 
 # Subrouting to log and display simulation messages
@@ -154,9 +154,19 @@ alt9000.write_termination = '\n'
 alt9000.write('RALT:TEST:STOP')
 time.sleep(2)
 #Set the Tx and Rx cable losses for the simulation as measured
-alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:TX 1.3")
-alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:RX 1.3")
-alt9000.write(":RALT:SET:CHAN1:LOSS:EXT:RX 9.7")
+# These are for bench test
+#alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:TX 1.3")
+#alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:RX 1.3")
+#alt9000.write(":RALT:SET:CHAN1:LOSS:EXT:RX 9.7")
+
+# These are for aircraft test with couplers and long cables
+alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:TX 4.5")
+alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:RX 4.3")
+alt9000.write(":RALT:SET:CHAN1:LOSS:EXT:RX 12.0")
+alt9000.write(":RALT:SET:CHAN1:LOSS:EXT:TX 0.0")
+alt9000.write(":RALT:SET:CHAN1:LOSS:COUP:TX 15.3")
+alt9000.write(":RALT:SET:CHAN1:LOSS:COUP:RX 15.7")
+
 # Set the ALT9000 to manual mode and fixed altitude
 alt9000.write(':RALT:ASIM:MODE MAN')
 alt9000.write(':RALT:ASIM:MAN:CHAN1:RATE 0')
@@ -252,7 +262,7 @@ for j in frequencies:
 
     while time.time() < init_ts + baselineduration:
       timestamp = time.time() - init_ts
-      print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV2(minpowerforplot)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+      print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV3(minpowerforplot)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
       basesamples=basesamples + 1
       basecumulative=basecumulative + voltstofeet(multimeter.query(":measure:voltage:DC?"))
 
@@ -277,7 +287,7 @@ for j in frequencies:
       while time.time() < temptime + rfonduration:
         timestamp = time.time() - init_ts
     #   This conversion is the standard conversion for IBE testing.    
-        print(float(timestamp),",1,", int(x),",", float(pwrtopsdFinalV2(x)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+        print(float(timestamp),",1,", int(x),",", float(pwrtopsdFinalV3(x)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
     #   This conversion was used at Calspsn for the OOBE testing.  The path losses are 6.4 dB and the conversion to dBm/MHz is 20 dB.
     #   print(float(timestamp),",1,", int(x),",", float(x - 6.4 - 20),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
         thissamples=thissamples + 1
@@ -290,7 +300,7 @@ for j in frequencies:
       smcv.output.state.set_value(False)   
       while time.time() < temptime + rfoffduration:
         timestamp = time.time() - init_ts
-        print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV2(minpowerforplot)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+        print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV3(minpowerforplot)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
 
       # Stop the test for this frequency and altitude combination if the altitude average exceeds a predefined threshold
       if (stopwhenexceed and ((abs(baseaverage - thisaverage)/baseaverage) > stopat)):

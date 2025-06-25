@@ -138,6 +138,49 @@ def pwrtopsdFinalV2(power):
 
   return psd
 
+# VERSION Final V3: This version is based on the configuration for V2 but 
+# with new filters on the input and output of RF amplifier going to 
+# 4200 MHz (instead of the 4180 MHz of V1).
+# The calibration used a 5G 100 MHz signal centered at 4100 MHz.
+# Calibration data collected on June 24, 2025.
+# 
+def pwrtopsdFinalV3(power):
+  power = float(power)
+  psd = -999
+
+  if power < -12.0:
+    psd = power + 15.5
+  elif ((power >= -12.0) and (power < -11.0)):
+    psd = interpol(power,-12.0,15.5,-11.0,15.3)
+  elif (power >= -11.0) and (power < -10.0):
+    psd = interpol(power,-11.0,15.3,-10.0,15.1)
+  elif (power >= -10.0) and (power < -9.0):
+    psd = interpol(power,-10.0,15.1,-9.0,14.7)
+  elif (power >= -9.0) and (power < -8.0):
+    psd = interpol(power,-9.0,14.7,-8.0,14.4)
+  elif (power >= -8.0) and (power < -7.0):
+    psd = interpol(power,-8.0,14.4,-7.0,14.0)
+  elif (power >= -7.0) and (power < -6.0):
+    psd = interpol(power,-7.0,14.0,-6.0,13.5)
+  elif (power >= -6.0) and (power < -5.0):
+    psd = interpol(power,-6.0,13.5,-5.0,13.0)
+  elif (power >= -5.0) and (power < -4.0):
+    psd = interpol(power,-5.0,13.0,-4.0,12.5)
+  elif (power >= -4.0) and (power < -3.0):
+    psd = interpol(power,-4.0,12.5,-3.0,11.9)
+  elif (power >= -3.0) and (power < -2.0):
+    psd = interpol(power,-3.0,11.9,-2.0,11.4)
+  elif (power >= -2.0) and (power < -1.0):
+    psd = interpol(power,-2.0,11.4,-1.0,10.5)
+  elif (power >= -1.0) and (power <= 0.0):
+    psd = interpol(power,-1.0,10.5,0.0,9.8)
+  else:
+    psd = -999.0
+
+  return psd
+
+
+
 def interpol(pwr,lowbound,lowlimit,highbound,highlimit):
   pwr=float(pwr)
   lowlimit=float(lowlimit)

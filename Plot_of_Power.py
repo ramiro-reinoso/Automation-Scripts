@@ -72,7 +72,7 @@ for j in frequencies:
         maxplotpsd=simul["psd"].max() + 2   # Maximum PSD when 5G gen is ON with a little more room.
         
 
-        ax=simul.plot("time","alt",figsize=(8,4.5))
+        ax=simul.plot("time","alt",figsize=(8,4.5)) # Original size is (8,4.5)
         ax1=ax.twinx()
         simul.plot("time","psd",ax=ax1,color="orange")
         ax.legend().set_visible(False)
@@ -80,10 +80,10 @@ for j in frequencies:
         ax.set_ylim([altaxismin,altaxismax])
         ax1.set_ylim([minplotpsd,maxplotpsd])
         ax.set_title(plottitle)
-        ax.set_xlabel("Elapsed Time (seconds)")
+        ax.set_xlabel("Elapsed Time (seconds)",fontsize=8)
         ax.set_ylabel("Measured Altitude (feet)")
         ax1.set_ylabel("Interference PSD at Radalt Input (dBm/MHz)")
-        ax.figure.savefig(outfilename,dpi=600)
+        ax.figure.savefig(outfilename,dpi=600) # Original dpi is 600
         plt.close()
 
 exit()

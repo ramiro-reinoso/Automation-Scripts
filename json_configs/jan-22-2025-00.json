@@ -7,7 +7,7 @@
     "genminpower": -15,
     "genmaxpower": -5,
     "deltatopwroff": 10,
-    "altitudes": [200,500,1000,2000,2500],
+    "altitudes": [50,200,500,1000,2000,2500],
     "frequencies" : [4150],
     "includeOtherPlanes": true,
     "includeOnBoard": true,
