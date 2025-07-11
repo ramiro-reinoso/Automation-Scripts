@@ -17,5 +17,6 @@
     "rfonduration": 20,
     "rfoffduration": 10,
     "waittostable": 2,
-    "psdonfile": true
+    "psdonfile": true,
+    "psdcorrection": -20.0
 }

@@ -29,6 +29,14 @@ if filter5G:
 else:
     filtered="without 5G Filter"
 
+# Check if the PSD in the CSV file needs to be adjusted and if it does to be adjusted,
+# by how much
+if "psdcorrection" in configs:
+    psdadjust = configs["psdcorrection"]
+else:
+    psdadjust = 0.0
+
+print("PSD Adjust " + str(psdadjust))
 
 # Start the plots
 
@@ -46,6 +54,13 @@ for j in frequencies:
         # Drop the first row which is the baseline row
         df = df.drop([0])
         
+        # Adjust the psd of the data as per the config file but this requires to perform
+        # the adjustment in a float column and then convert it back to string
+        # Complicated but this is what the operation required
+        df["floatpsd"] = pd.to_numeric(df["psd"], errors='coerce')
+        df["floatpsd"] = df['floatpsd'] + psdadjust
+        df["psd"] = df['floatpsd'].astype(str)
+
         # Create a figure with subplots
         fig,ax = plt.subplots(figsize=(8,4.5))
 

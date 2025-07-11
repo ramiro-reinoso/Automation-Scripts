@@ -40,6 +40,13 @@ if filter5G:
 else:
     filtered="without 5G Filter"
 
+# Check if the PSD in the CSV file needs to be adjusted and if it does to be adjusted,
+# by how much
+if "psdcorrection" in configs:
+    psdadjust = configs["psdcorrection"]
+else:
+    psdadjust = 0.0
+
 # Start the plots
 
 for j in frequencies:
@@ -66,6 +73,9 @@ for j in frequencies:
 
         if not psdonfile:
             simul["psd"] = simul["pwr"].apply(pwrtopsdLabFilter)
+
+        # Adjust the psd of the data as per the config file
+        simul["psd"] = simul["psd"] + psdadjust
 
         # Calculate power range for plot
         minplotpsd=simul["psd"].min() - 2   # Minimum PSD when 5G gen if OFF with a little more room.
