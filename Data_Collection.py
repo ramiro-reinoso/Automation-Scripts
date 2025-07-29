@@ -160,12 +160,12 @@ time.sleep(2)
 #alt9000.write(":RALT:SET:CHAN1:LOSS:EXT:RX 9.7")
 
 # These are for aircraft test with couplers and long cables
-alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:TX 4.5")
-alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:RX 4.3")
-alt9000.write(":RALT:SET:CHAN1:LOSS:EXT:RX 12.0")
-alt9000.write(":RALT:SET:CHAN1:LOSS:EXT:TX 0.0")
-alt9000.write(":RALT:SET:CHAN1:LOSS:COUP:TX 15.3")
-alt9000.write(":RALT:SET:CHAN1:LOSS:COUP:RX 15.7")
+alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:TX 0.9")
+alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:RX 0.9")
+alt9000.write(":RALT:SET:CHAN1:LOSS:EXT:RX 8.9")
+alt9000.write(":RALT:SET:CHAN1:LOSS:EXT:TX 1.9")
+alt9000.write(":RALT:SET:CHAN1:LOSS:COUP:TX 0.0")
+alt9000.write(":RALT:SET:CHAN1:LOSS:COUP:RX 0.0")
 
 # Set the ALT9000 to manual mode and fixed altitude
 alt9000.write(':RALT:ASIM:MODE MAN')

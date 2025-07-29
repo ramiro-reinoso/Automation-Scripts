@@ -1,0 +1,22 @@
+{
+    "Description": "Lab ALT-4000 Radalt SN 5359413 Part 822-0615-175. No Filter",
+    "5Gtestsignal": "100 MHz TM1-1",
+    "5Gfilter": false,
+    "folder": "LAB-ALT-4000-Jul-28-25-03",
+    "radar": "ALT-4000",
+    "genminpower": -55,
+    "genmaxpower": -5,
+    "deltatopwroff": 10,
+    "altitudes": [50,100,200,500,1000,1500,2000,2500],
+    "frequencies" : [4150],
+    "includeOtherPlanes": true,
+    "includeOnBoard": true,
+    "stopwhenexceed": true,
+    "stoplimit": 0.02,
+    "baselineduration": 60,
+    "rfonduration": 20,
+    "rfoffduration": 10,
+    "waittostable": 2,
+    "psdonfile": true,
+    "psdcorrection": 0.0
+}
