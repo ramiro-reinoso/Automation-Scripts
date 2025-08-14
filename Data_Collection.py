@@ -266,7 +266,7 @@ for j in frequencies:
       print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV3(minpowerforplot)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
 
       # This is the OOBE power conversion
-      # print(float(timestamp),",0,",int(minpowerforplot),",", float(minpowerforplot - 6.4 - 20),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+      #print(float(timestamp),",0,",int(minpowerforplot),",", float(minpowerforplot - 7.75 - 20),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
       basesamples=basesamples + 1
       basecumulative=basecumulative + voltstofeet(multimeter.query(":measure:voltage:DC?"))
 
@@ -294,7 +294,7 @@ for j in frequencies:
         print(float(timestamp),",1,", int(x),",", float(pwrtopsdFinalV3(x)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
 
     #   This conversion was used at Calspsn for the OOBE testing.  The path losses are 6.4 dB and the conversion to dBm/MHz is 20 dB.
-    #    print(float(timestamp),",1,", int(x),",", float(x - 6.4 - 20),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+        #print(float(timestamp),",1,", int(x),",", float(x - 7.75 - 20),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
 
         thissamples=thissamples + 1
         thiscumulative=thiscumulative + voltstofeet(multimeter.query(":measure:voltage:DC?"))
@@ -311,7 +311,7 @@ for j in frequencies:
         print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV3(minpowerforplot)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
 
         # This conversion was used at Calspsn for the OOBE testing.  The path losses are 6.4 dB and the conversion to dBm/MHz is 20 dB.
-        # print(float(timestamp),",0,", int(minpowerforplot),",", float(minpowerforplot - 6.4 - 20),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+        #print(float(timestamp),",0,", int(minpowerforplot),",", float(minpowerforplot - 7.75 - 20),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
 
       # Stop the test for this frequency and altitude combination if the altitude average exceeds a predefined threshold
       if (stopwhenexceed and ((abs(baseaverage - thisaverage)/baseaverage) > stopat)):

@@ -1,8 +1,8 @@
 {
-    "Description": "Lab ALT-4000 Radalt SN 5359413 Part 822-0615-175. Loaner ALT-9000. No Filter.",
+    "Description": "Lab ALT-4000 Radalt SN 5359414 Part 822-0615-175. Loaner ALT-9000. No Filter.",
     "5Gtestsignal": "100 MHz TM1-1",
     "5Gfilter": false,
-    "folder": "LAB-ALT-4000-Jul-28-25-03",
+    "folder": "LAB-ALT-4000-Aug-01-25-02",
     "radar": "ALT-4000",
     "genminpower": -55,
     "genmaxpower": -5,

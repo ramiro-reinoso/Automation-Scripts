@@ -1,6 +1,6 @@
 import pandas as pd
 import json
-from powertopsd5g import pwrtopsdLabFilter
+from powertopsd5g import pwrtopsdFinalV3
 
 # Read the simulation configuratin from the JSON files
 # Open the main config file and extract the jSON filename where the
@@ -103,7 +103,7 @@ for j in frequencies:
             if psdonfile:
                 sig5gpsd = tmppwr['psd'].iloc[0]
             else:
-                sig5gpsd = pwrtopsdLabFilter(i)
+                sig5gpsd = pwrtopsdFinalV3(i)
 
             tmprow={'pwr': i,'psd':round(sig5gpsd,1),'mean': round(thismean,1),'1stptile': round(this1stptile,1),'99thptile': round(this99thptile,1),
                             'meantest': mtest,'1stptiletest': priptile1sttest,'99ptiletest': priptile99thtest,

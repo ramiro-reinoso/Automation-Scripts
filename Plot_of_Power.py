@@ -2,7 +2,7 @@ import pandas as pd
 import json
 import matplotlib.pyplot as plt
 
-from powertopsd5g import pwrtopsdLabFilter
+from powertopsd5g import pwrtopsdFinalV3
 
 
 # Read the simulation configuratin from the JSON files
@@ -72,7 +72,7 @@ for j in frequencies:
         altaxismin=altaxismin - 0.1*altaxismin # Give ourselves some room at the bottom
 
         if not psdonfile:
-            simul["psd"] = simul["pwr"].apply(pwrtopsdLabFilter)
+            simul["psd"] = simul["pwr"].apply(pwrtopsdFinalV3)
 
         # Adjust the psd of the data as per the config file
         simul["psd"] = simul["psd"] + psdadjust

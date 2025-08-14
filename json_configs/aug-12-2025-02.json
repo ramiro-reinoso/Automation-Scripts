@@ -1,0 +1,22 @@
+{
+    "Description": "Lab ALT-4000 Radalt SN 5359413 Part 822-0615-175. SES ALT-9000. OOBE Testing",
+    "5Gtestsignal": "White Noise from R&S Vector Signal Generator",
+    "5Gfilter": false,
+    "folder": "LAB-ALT-4000-Aug-12-25-02",
+    "radar": "ALT-4000",
+    "genminpower": -57,
+    "genmaxpower": 0,
+    "deltatopwroff": 10,
+    "altitudes": [1000,1500,2000,2500],
+    "frequencies" : [4300],
+    "includeOtherPlanes": true,
+    "includeOnBoard": true,
+    "stopwhenexceed": true,
+    "stoplimit": 0.05,
+    "baselineduration": 60,
+    "rfonduration": 20,
+    "rfoffduration": 10,
+    "waittostable": 2,
+    "psdonfile": true,
+    "psdcorrection": 0.0
+}
