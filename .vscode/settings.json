@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./USB_ARINC_Bus_Interface"
+    ]
+}
