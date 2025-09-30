@@ -1,0 +1,21 @@
+{
+    "Description": "Bench Test ALT-55B Radalt Intelsat Owned No Filters.",
+    "5Gtestsignal": "100 MHz TM1-1",
+    "5Gfilter": false,
+    "folder": "LAB-ALT-55B-Aug-19-25-01",
+    "radar": "ALT-55B",
+    "genminpower": -50,
+    "genmaxpower": -6,
+    "deltatopwroff": 10,
+    "altitudes": [50],
+    "frequencies" : [3930],
+    "includeOtherPlanes": true,
+    "includeOnBoard": true,
+    "stopwhenexceed": true,
+    "stoplimit": 0.05,
+    "baselineduration": 60,
+    "rfonduration": 20,
+    "rfoffduration": 10,
+    "waittostable": 2,
+    "psdonfile": true
+}
