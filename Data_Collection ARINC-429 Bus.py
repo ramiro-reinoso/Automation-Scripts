@@ -20,10 +20,17 @@ import os
 #import the JSON utilities
 import json
 
-# import local functions
+# import miscellaneous local functions
 from alt55B_volts_to_feet import voltstofeet
 from powertopsd5g import pwrtopsdFinalV3
 from altitudeToVCOAttenuation import onboardVCOatt
+
+# import libraries for the USB ARINC-429 Interfade
+import sys
+sys.path.append('USB_ARINC_Bus_Interface/')
+from UA2000_Interface import openARINC249Card
+from UA2000_Interface import readARINCaltitude
+from UA2000_Interface import closeARINC249Card
 
 # Subrouting to log and display simulation messages
 def logger(logmsg):
@@ -113,12 +120,21 @@ RsSmcv.assert_minimum_version('5.0.122')
 smcv = RsSmcv('TCPIP::10.1.1.150::HISLIP')
 logger("5G Signal Generator Resource Description: "+str(smcv))
 
-# Open the session with the Rigol multimeter
-rigol = pyvisa.ResourceManager()
-multimeter = rigol.open_resource("TCPIP0::10.1.1.155::inst0::INSTR")
-multimeter.read_termination = '\n'
-multimeter.write_termination = '\n'
-logger("Multimeter Resource Description: "+str(multimeter))
+# # Open the session with the Rigol multimeter
+# rigol = pyvisa.ResourceManager()
+# multimeter = rigol.open_resource("TCPIP0::10.1.1.155::inst0::INSTR")
+# multimeter.read_termination = '\n'
+# multimeter.write_termination = '\n'
+# logger("Multimeter Resource Description: "+str(multimeter))
+
+# Open the session with the Astronics UA2000 ARINC-429 Bus Interface
+logger("Opening the ARINC-429 USB Interface Dongle")
+hcard,channel,core = openARINC249Card()
+if hcard == -99:
+  logger("Failed to open the ARINC-429 USB Interface Dongle")
+  exit ()
+else:
+  logger("Success opening the ARINC-429 USB Interface Dongle")
 
 # Open the session with the power supply for the VCO
 pwrsupply = pyvisa.ResourceManager()
@@ -262,15 +278,20 @@ for j in frequencies:
 
     while time.time() < init_ts + baselineduration:
       timestamp = time.time() - init_ts
+      altitude = readARINCaltitude(channel,core)
       # This is the IBE power conversion
-      print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV3(minpowerforplot)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+      print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV3(minpowerforplot)),",",altitude,file=outfile)
 
       # This is the OOBE power conversion
-      #print(float(timestamp),",0,",int(minpowerforplot),",", float(minpowerforplot - 7.75 - 20),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
-      basesamples=basesamples + 1
-      basecumulative=basecumulative + voltstofeet(multimeter.query(":measure:voltage:DC?"))
+      #print(float(timestamp),",0,",int(minpowerforplot),",", float(minpowerforplot - 7.75 - 20),",",altitude,file=outfile)
+      
+      if altitude > -90:
+        basecumulative=basecumulative + altitude
+        basesamples=basesamples + 1
 
-    baseaverage=basecumulative / basesamples  # Establish the average altitude baseline 
+      time.sleep(0.05)  # Sleep for 50 milliseconds.  The altitude is updated every 40 milliseconds
+
+    baseaverage=basecumulative / basesamples  # Establish the average altitude baseline
     logger("Completed baseline performance. Average altitude is "+str(round(float(baseaverage),2))+" feet")
     logger("Start data collection")
 
@@ -290,14 +311,17 @@ for j in frequencies:
       temptime = time.time()
       while time.time() < temptime + rfonduration:
         timestamp = time.time() - init_ts
+        altitude = readARINCaltitude(channel,core)
     #   This conversion is the standard conversion for IBE testing.    
-        print(float(timestamp),",1,", int(x),",", float(pwrtopsdFinalV3(x)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+        print(float(timestamp),",1,", int(x),",", float(pwrtopsdFinalV3(x)),",",altitude,file=outfile)
 
     #   This conversion was used at Calspsn for the OOBE testing.  The path losses are 6.4 dB and the conversion to dBm/MHz is 20 dB.
-        #print(float(timestamp),",1,", int(x),",", float(x - 7.75 - 20),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+        #print(float(timestamp),",1,", int(x),",", float(x - 7.75 - 20),",",readARINCaltitude(channel,core),file=outfile)
 
         thissamples=thissamples + 1
-        thiscumulative=thiscumulative + voltstofeet(multimeter.query(":measure:voltage:DC?"))
+        thiscumulative=thiscumulative + altitude
+
+        time.sleep(0.05)  # Sleep for 50 milliseconds.  The altitude is updated every 40 milliseconds
 
       thisaverage=thiscumulative / thissamples  # Calculate the average altitude for this sweep
 
@@ -306,12 +330,15 @@ for j in frequencies:
       smcv.output.state.set_value(False)   
       while time.time() < temptime + rfoffduration:
         timestamp = time.time() - init_ts
+        altitude = readARINCaltitude(channel,core)
 
         # This has the standard conversion from 5G power out to PSD
-        print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV3(minpowerforplot)),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+        print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV3(minpowerforplot)),",",altitude,file=outfile)
 
         # This conversion was used at Calspsn for the OOBE testing.  The path losses are 6.4 dB and the conversion to dBm/MHz is 20 dB.
-        #print(float(timestamp),",0,", int(minpowerforplot),",", float(minpowerforplot - 7.75 - 20),",",float(voltstofeet(multimeter.query(":measure:voltage:DC?"))),file=outfile)
+        #print(float(timestamp),",0,", int(minpowerforplot),",", float(minpowerforplot - 7.75 - 20),",",readARINCaltitude(channel,core),file=outfile)
+
+        time.sleep(0.05)  # Sleep for 50 milliseconds.  The altitude is updated every 40 milliseconds
 
       # Stop the test for this frequency and altitude combination if the altitude average exceeds a predefined threshold
       if (stopwhenexceed and ((abs(baseaverage - thisaverage)/baseaverage) > stopat)):
@@ -329,7 +356,8 @@ alt9000.write('RALT:TEST:RES')
 time.sleep(2)
 alt9000.write('RALT:TEST:STOP')
 smcv.close()
-multimeter.close()
+closeARINC249Card(hcard,core)
+# multimeter.close()
 alt9000.close()
 hmc8042.close()
 rcdat6000.close()

@@ -82,14 +82,24 @@ def card_reset( hCard, hCore, channum ):
 
     return errval
 
-altitude = BTI429.MSGSTRUCT429()
-
-def openARINC249Card():
+def example1():
+    print("**********************************************************************")
+    print("*                                                                    *")
+    print("*  EXAMP1  (05/23/2019)                                              *")
+    print("*  Copyright 2001-2019  Ballard Technology, Inc.  Everett, WA, USA.  *")
+    print("*  All rights reserved.                                              *")
+    print("*  Go to www.astronics.com or email Ballard.Support@astronics.com    *")
+    print("*                                                                    *")
+    print("*  BTI429 Example 1                                                 *")
+    print('*  "Simulating the BC - Unscheduled Messages"                        *')
+    print("*                                                                    *")
+    print("**********************************************************************")
 
     hCard =  open_card()
 
     if (hCard != 0):
         hCore, channum  = open_core(hCard)
+        print("card, core, chnum",hCard,hCore,channum)
         print("Receive channel successfully found")
         if ( -1!=channum ):
             errval = card_reset(hCard, hCore, channum)
@@ -97,8 +107,13 @@ def openARINC249Card():
                 description = BTICARD.ErrDescStr(errval, hCore)
                 print(f'BTICard_ErrDescStr =  { description.decode("utf-8") }') 
                 BTICARD.CardClose(hCard)
-                return -99 -99 -99
-
+                return 0
+            # SUBADDRESS_FLAG     = 0 
+            # TERMINAL_SUBADDRES  = 4
+            # RCV                 = 0
+            # XTM                 = 1
+            # MSG_NUMBER          = 10
+            
             """
             Reset the card
             """
@@ -107,7 +122,7 @@ def openARINC249Card():
             if errval != 0:
                 print("Error resetting the card")
                 BTICARD.CardClose(hCard)
-                return -99 -99 -99
+                return 0
             else:
                 print("Card reset was successful")
             
@@ -115,85 +130,68 @@ def openARINC249Card():
             if errval != 0:
                 print("Error setting the channel to AUTOSPEED the card")
                 BTICARD.CardClose(hCard)
-                return -99 -99 -99
+                return 0
 
-            # Set the core filter to pick up the ARINC-429 Octal address 165 packets which is altitude in Binary Coded Decimal (BCD)
+            # msg = BTI429.MSGSTRUCT429()
+            # msg.addr = BTI429.FilterDefault(BTI429.MSGCRT429['DEFAULT'],channum,hCore)
+            altitude = BTI429.MSGSTRUCT429()
             altitude.addr  = BTI429.FilterSet(BTI429.MSGCRT429['DEFAULT'],0o165,0xFFFFFFFF,channum,hCore)
+            maintenance = BTI429.MSGSTRUCT429()
+            maintenance.addr = BTI429.FilterSet(BTI429.MSGCRT429['DEFAULT'],0o270,0xFFFFFFFF,channum,hCore)
 
-            #Start operation of the card.
+            """
+            Start operation of the card.
+            """
             
             if(BTICARD.CardStart(hCore) != 0):
                 print("ERROR starting the core.")
-                return -99 -99 -99
             else:
                 print("Core successfully started.")
     
             time.sleep(2)
-            # print("Open Statement",hCard,channum,hCore)
 
-            # altitude.data = BTI429.MsgDataRd(altitude.addr,hCore)
-            # print("Raw data",hex(altitude.data))
+            for i in range(5):
+                # msg.data = BTI429.MsgDataRd(msg.addr,hCore)
+                altitude.data = BTI429.MsgDataRd(altitude.addr,hCore)
+                # Clear the parity bit (later check the parity if necessary)
+                altitude.data = altitude.data & 0x7FFFFFFF
 
-            return hCard, channum, hCore
-    else:
-        BTICARD.CardClose(hCard)
-        print("Error opening and Getting Card functional")
-        return -99 -99 -99   
+                match (altitude.data >> 29):
+                    case 0:
+                        print("Positive Altitude")
+                        sign = 1
+                    case 1:
+                        print("No Computed Data (NCD)")
+                    case 2:
+                        print("Functional Test")
+                    case 3:
+                        print("Negative altitude")
+                        sign = -1
 
+                altBCD = (altitude.data >> 10) & 0x7FFFF
 
+                alt = (altBCD & 0xF) / 10
+                alt = alt + ((altBCD >> 4) & 0xF)
+                alt = alt + ((altBCD >> 8) & 0xF) * 10
+                alt = alt + ((altBCD >> 12) & 0xF) * 100
+                alt = alt + ((altBCD >> 16) & 0xF) * 1000
 
-def readARINCaltitude(channum,hCore):
-
-            # msg = BTI429.MSGSTRUCT429()
-            # msg.addr = BTI429.FilterDefault(BTI429.MSGCRT429['DEFAULT'],channum,hCore)
-            #altitude.addr  = BTI429.FilterSet(BTI429.MSGCRT429['DEFAULT'],0o165,0xFFFFFFFF,channum,hCore)
-#            maintenance = BTI429.MSGSTRUCT429()
-#            maintenance.addr = BTI429.FilterSet(BTI429.MSGCRT429['DEFAULT'],0o270,0xFFFFFFFF,channum,hCore)
-
-            # msg.data = BTI429.MsgDataRd(msg.addr,hCore)
-            altitude.data = BTI429.MsgDataRd(altitude.addr,hCore)
-            # print("Raw data",hex(altitude.data))
-            # Clear the parity bit (later check the parity if necessary)
-            altitude.data = altitude.data & 0x7FFFFFFF
-
-            match (altitude.data >> 29):
-                case 0:
-                    #print("Positive Altitude")
-                    sign = 1
-                case 1:
-                    #print("No Computed Data (NCD)")
-                    return -98
-                case 2:
-                    #print("Functional Test")
-                    return -99
-                case 3:
-                    #print("Negative altitude")
-                    sign = -1
-
-            altBCD = (altitude.data >> 10) & 0x7FFFF
-
-            alt = (altBCD & 0xF) / 10
-            alt = alt + ((altBCD >> 4) & 0xF)
-            alt = alt + ((altBCD >> 8) & 0xF) * 10
-            alt = alt + ((altBCD >> 12) & 0xF) * 100
-            alt = alt + ((altBCD >> 16) & 0xF) * 1000
-
-            alt = sign * alt
+                alt = sign * alt
 
 
-            #maintenance.data = BTI429.MsgDataRd(maintenance.addr,hCore)
-            # print(hex(msg.data))
-            #print(hex(altitude.data))
-            #print(hex(altBCD))
-            return alt
-            #print(hex(maintenance.data))
+                #maintenance.data = BTI429.MsgDataRd(maintenance.addr,hCore)
+                # print(hex(msg.data))
+                print(hex(altitude.data))
+                print(hex(altBCD))
+                print(alt)
+                #print(hex(maintenance.data))
 
+                time.sleep(1)
             
-
-def closeARINC249Card(hCard, hCore):
             """
             Stop the card.
             """
+
             BTICARD.CardStop(hCore)
 
             """
@@ -202,4 +200,8 @@ def closeARINC249Card(hCard, hCore):
 
             BTICARD.CardClose(hCard)
             
-
+        else:
+            BTICARD.CardClose(hCard)
+      
+if __name__== "__main__":
+    example1()
