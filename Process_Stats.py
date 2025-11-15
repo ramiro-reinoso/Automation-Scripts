@@ -98,7 +98,14 @@ for j in frequencies:
             maxerror = (basemax - thismax)/basemax * 100
             ptile1sterror = (base1stptile - this1stptile)/base1stptile * 100
             ptile99therror = (base99thptile - this99thptile)/base99thptile * 100
-            stderror = (basestd - thisstd)/basestd * 100
+            # In some instances especially using the ARINC-429 bus, the baseline standard deviation can be zero, i.e., no changes in altitude.
+            # Under these circumstances, a division by zero will occur and this will throw a run-time error.  Therefore, it is impossible to
+            # calculate a percent change from the baseline standard deviation and we will default it to zero.
+            if(basestd != 0.0):
+                stderror = (basestd - thisstd)/basestd * 100
+            else:
+                stderror = 0
+
 
             if psdonfile:
                 sig5gpsd = tmppwr['psd'].iloc[0]

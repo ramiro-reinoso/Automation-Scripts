@@ -1,0 +1,22 @@
+{
+    "Description": "Lab ALT-4000 Radalt SN 5359414 Part 822-0615-175. ARINC Bus Data Collection. TEST",
+    "5Gtestsignal": "100 MHz TM1-1",
+    "5Gfilter": false,
+    "folder": "LAB-ALT-4000-Nov-14-2025-01",
+    "radar": "ALT-4000",
+    "genminpower": -30,
+    "genmaxpower": -5,
+    "deltatopwroff": 10,
+    "altitudes": [500],
+    "frequencies" : [4150],
+    "includeOtherPlanes": false,
+    "includeOnBoard": false,
+    "stopwhenexceed": true,
+    "stoplimit": 0.1,
+    "baselineduration": 60,
+    "rfonduration": 20,
+    "rfoffduration": 10,
+    "waittostable": 2,
+    "psdonfile": true,
+    "psdcorrection": 0.0
+}

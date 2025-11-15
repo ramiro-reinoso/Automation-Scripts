@@ -179,6 +179,49 @@ def pwrtopsdFinalV3(power):
 
   return psd
 
+# VERSION Final V4: This version is based on the configuration for V3 but 
+# with new cables.
+# The calibration used a 5G 100 MHz signal centered at 4030 MHz.
+# Calibration data collected on November 13, 2025.
+# 
+def pwrtopsdFinalV4(power):
+  power = float(power)
+  psd = -999
+
+  if power < -14.0:
+    psd = power + 19.6
+  elif ((power >= -14.0) and (power < -13.0)):
+    psd = interpol(power,-14.0,19.6,-13.0,19.45)    
+  elif ((power >= -13.0) and (power < -12.0)):
+    psd = interpol(power,-13.0,19.45,-12.0,19.3)
+  elif ((power >= -12.0) and (power < -11.0)):
+    psd = interpol(power,-12.0,19.3,-11.0,19.1)
+  elif (power >= -11.0) and (power < -10.0):
+    psd = interpol(power,-11.0,19.1,-10.0,18.8)
+  elif (power >= -10.0) and (power < -9.0):
+    psd = interpol(power,-10.0,18.8,-9.0,18.5)
+  elif (power >= -9.0) and (power < -8.0):
+    psd = interpol(power,-9.0,18.5,-8.0,18.1)
+  elif (power >= -8.0) and (power < -7.0):
+    psd = interpol(power,-8.0,18.1,-7.0,17.7)
+  elif (power >= -7.0) and (power < -6.0):
+    psd = interpol(power,-7.0,17.7,-6.0,17.2)
+  elif (power >= -6.0) and (power < -5.0):
+    psd = interpol(power,-6.0,17.2,-5.0,16.7)
+  elif (power >= -5.0) and (power < -4.0):
+    psd = interpol(power,-5.0,16.7,-4.0,16.1)
+  elif (power >= -4.0) and (power < -3.0):
+    psd = interpol(power,-4.0,16.1,-3.0,15.4)
+  elif (power >= -3.0) and (power < -2.0):
+    psd = interpol(power,-3.0,15.4,-2.0,14.7)
+  elif (power >= -2.0) and (power < -1.0):
+    psd = interpol(power,-2.0,14.7,-1.0,14.0)
+  elif (power >= -1.0) and (power <= 0.0):
+    psd = interpol(power,-1.0,14.0,0.0,13.2)
+  else:
+    psd = -999.0
+
+  return psd
 
 
 def interpol(pwr,lowbound,lowlimit,highbound,highlimit):

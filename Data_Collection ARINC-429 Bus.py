@@ -22,7 +22,7 @@ import json
 
 # import miscellaneous local functions
 from alt55B_volts_to_feet import voltstofeet
-from powertopsd5g import pwrtopsdFinalV3
+from powertopsd5g import pwrtopsdFinalV4
 from altitudeToVCOAttenuation import onboardVCOatt
 
 # import libraries for the USB ARINC-429 Interfade
@@ -176,10 +176,10 @@ time.sleep(2)
 #alt9000.write(":RALT:SET:CHAN1:LOSS:EXT:RX 9.7")
 
 # These are for aircraft test with couplers and long cables
-alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:TX 0.9")
-alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:RX 0.9")
-alt9000.write(":RALT:SET:CHAN1:LOSS:EXT:RX 8.9")
-alt9000.write(":RALT:SET:CHAN1:LOSS:EXT:TX 1.9")
+alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:TX 1.05")
+alt9000.write(":RALT:SET:CHAN1:LOSS:CABL:RX 0.97")
+alt9000.write(":RALT:SET:CHAN1:LOSS:EXT:RX 9.12")
+alt9000.write(":RALT:SET:CHAN1:LOSS:EXT:TX 2.9")
 alt9000.write(":RALT:SET:CHAN1:LOSS:COUP:TX 0.0")
 alt9000.write(":RALT:SET:CHAN1:LOSS:COUP:RX 0.0")
 
@@ -280,7 +280,7 @@ for j in frequencies:
       timestamp = time.time() - init_ts
       altitude = readARINCaltitude(channel,core)
       # This is the IBE power conversion
-      print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV3(minpowerforplot)),",",altitude,file=outfile)
+      print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV4(minpowerforplot)),",",altitude,file=outfile)
 
       # This is the OOBE power conversion
       #print(float(timestamp),",0,",int(minpowerforplot),",", float(minpowerforplot - 7.75 - 20),",",altitude,file=outfile)
@@ -289,7 +289,7 @@ for j in frequencies:
         basecumulative=basecumulative + altitude
         basesamples=basesamples + 1
 
-      time.sleep(0.05)  # Sleep for 50 milliseconds.  The altitude is updated every 40 milliseconds
+      time.sleep(0.1)  # Sleep for 100 milliseconds.  The altitude is updated every 40 milliseconds
 
     baseaverage=basecumulative / basesamples  # Establish the average altitude baseline
     logger("Completed baseline performance. Average altitude is "+str(round(float(baseaverage),2))+" feet")
@@ -313,7 +313,7 @@ for j in frequencies:
         timestamp = time.time() - init_ts
         altitude = readARINCaltitude(channel,core)
     #   This conversion is the standard conversion for IBE testing.    
-        print(float(timestamp),",1,", int(x),",", float(pwrtopsdFinalV3(x)),",",altitude,file=outfile)
+        print(float(timestamp),",1,", int(x),",", float(pwrtopsdFinalV4(x)),",",altitude,file=outfile)
 
     #   This conversion was used at Calspsn for the OOBE testing.  The path losses are 6.4 dB and the conversion to dBm/MHz is 20 dB.
         #print(float(timestamp),",1,", int(x),",", float(x - 7.75 - 20),",",readARINCaltitude(channel,core),file=outfile)
@@ -333,7 +333,7 @@ for j in frequencies:
         altitude = readARINCaltitude(channel,core)
 
         # This has the standard conversion from 5G power out to PSD
-        print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV3(minpowerforplot)),",",altitude,file=outfile)
+        print(float(timestamp),",0,",int(minpowerforplot),",", float(pwrtopsdFinalV4(minpowerforplot)),",",altitude,file=outfile)
 
         # This conversion was used at Calspsn for the OOBE testing.  The path losses are 6.4 dB and the conversion to dBm/MHz is 20 dB.
         #print(float(timestamp),",0,", int(minpowerforplot),",", float(minpowerforplot - 7.75 - 20),",",readARINCaltitude(channel,core),file=outfile)
